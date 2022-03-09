@@ -1,0 +1,119 @@
+<h1 style="color: #fab82d">Payment Gateway Testing</h1>
+
+<p>This is a simple example of an Angular/C# component.</p>
+
+<div class="container">
+  <div class="column" id="transaction">
+    <h3 style="color: #5d63a8">Customer Information</h3>
+    <form method="post" action="#">
+      <div>
+        <div class="row">
+          <div class="col-100 pading-left-15">
+            <label>Bill Number</label>
+            <input class="form-control" type="text" id="billNumber" name="billNumber" value="{{billNumber}}" placeholder="Bill Number" className="form-control" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-50 pading-left-15">
+            <label>First Name</label>
+            <input class="form-control" type="text" id="firstName" name="firstName" value="{{firstName}}" placeholder="First name" className="form-control" />
+          </div>
+          <div class="col-50 pading-left-15">
+            <label>Last Name</label>
+            <input class="form-control" type="text" id="lastName" name="lastName" value="{{lastName}}" placeholder="Last name" className="form-control" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-100 pading-left-15">
+            <label>Email</label>
+            <input class="form-control" type="text" id="email" name="email" value="{{email}}" placeholder="Email" className="form-control" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-50 pading-left-15">
+            <label>Address</label>
+            <input class="form-control" type="text" id="address" name="address" placeholder="Address" value="{{address}}" className="form-control" />
+          </div>
+          <div class="col-50 pading-left-15">
+            <label>City</label>
+            <select class="form-control" id="city" name="city" value="{{city}}">
+              <option value="HCM" defaultValue="HCM">Ho Chi Minh City</option>
+              <option value="Hanoi">Ha Noi</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-50 pading-left-15">
+            <label for="currency-field">Amount</label>
+            <input class="form-control" type="text" id="orderAmount" value="{{amount}}" (change)="transformAmount($event)"/>
+          </div>
+          <div class="col-50 pading-left-15">
+            <label>Currency</label>
+            <select class="form-control" id="orderCurrency" name="orderCurrency" value="{{currency}}" (change)="transformAmount($event)">
+              <option value="USD">USD</option>
+              <option value="VND" defaultValue="VND">VND</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-50 pading-left-15">
+          <label>Description</label>
+          <input class="form-control" id="orderDescription" name="orderDescription" placeholder="Description" rows="2" value="{{description}}" className="form-control" />
+        </div>
+        <div class="col-50 pading-left-15">
+          <label>Language</label>
+          <select class="form-control" id="language" name="language" value={{lang}}>
+            <option value="vi" defaultValue="vi">Tiếng Việt</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </div>
+    </form>
+    <br />
+  </div>
+  <div class="pading-left-20 column">
+    <h3 style="color: #5d63a8">Payment Information</h3>
+    <div class="row">
+      <div class="col-100 pading-left-15">
+        <label>Service Provider</label>
+        <select class="form-control" name="cardType" id="cardType" [(ngModel)]="cardTypeSelect" value="{{cardtype}}" (change)="filterCardType($event.target.value)">
+          <option *ngFor="let item of cardType" [value]="item.item">
+            {{item.value}}
+          </option>
+        </select>
+      </div>
+    </div> 
+    <div class="row">
+      <div class="col-100 pading-left-15">
+        <label>Bank/Card Scheme/Wallet</label>
+        <select id='bank' class="form-control" name='people' [(ngModel)]="bankSelect">
+          <option *ngFor="let item of data" [value]="item.item">
+            {{item.value}}
+          </option>
+        </select>
+      </div>
+    </div>
+    <!--<div class="row">
+      <div class="col-100 pading-left-15">
+        <label>Request</label>
+        <select class="form-control" name="request" id="request" value="">
+          <option value="purchase">Purchase</option>
+        </select>
+      </div>
+    </div>-->
+
+    <br />
+    <div className="form-group row">
+      <div className="twelve columns">
+        <button class="btn" [disabled]="isDisabledButton" (click)="inProcess()"><i class="fa fa-spinner fa-spin" *ngIf="loading"></i> Process</button>
+      </div>
+    </div>
+  </div>
+  <br />
+</div>
