@@ -1,4 +1,4 @@
-<h1 style="color: #fab82d">Payment Gateway Testing</h1>
+<h1 style="color: #fab82d">Secure Page Demo</h1>
 
 <p>This is a simple example of an Angular/C# component.</p>
 
@@ -83,8 +83,8 @@
       <div class="col-100 pading-left-15">
         <label>Service Provider</label>
         <select class="form-control" name="cardType" id="cardType" [(ngModel)]="cardTypeSelect" value="{{cardtype}}" (change)="filterCardType($event.target.value)">
-          <option *ngFor="let item of cardType" [value]="item.item">
-            {{item.value}}
+          <option *ngFor="let item of cardType" [value]="item.value">
+            {{item.text}}
           </option>
         </select>
       </div>
@@ -93,8 +93,8 @@
       <div class="col-100 pading-left-15">
         <label>Bank/Card Scheme/Wallet</label>
         <select id='bank' class="form-control" name='people' [(ngModel)]="bankSelect">
-          <option *ngFor="let item of data" [value]="item.item">
-            {{item.value}}
+          <option *ngFor="let item of data" [value]="item.value">
+            {{item.text}}
           </option>
         </select>
       </div>

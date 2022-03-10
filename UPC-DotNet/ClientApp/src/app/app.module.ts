@@ -5,18 +5,20 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './cancel/home.component';
+import { CancelComponent } from './cancel/cancel.component';
 import { PaymentComponent } from './home/payment.component';
-import { FetchDataComponent } from './result/fetch-data.component';
+import { RouterComponent } from './router/router.component';
+import { ResultComponent } from './result/result.component';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
-    HomeComponent,
+    CancelComponent,
     PaymentComponent,
-    FetchDataComponent
+    RouterComponent,
+    ResultComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -24,9 +26,9 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
     FormsModule,
     RouterModule.forRoot([
       { path: '', component: PaymentComponent, pathMatch: 'full' },
-      { path: 'cancel', component: HomeComponent },
-      { path: 'success', component: FetchDataComponent },
-      { path: 'dynamic', component: FetchDataComponent },
+      { path: 'cancel', component: CancelComponent },
+      { path: 'success', component: ResultComponent },
+      { path: 'router', component: RouterComponent },
     ])
   ],
   providers: [CurrencyPipe],

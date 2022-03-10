@@ -76,7 +76,7 @@ namespace Demo.Controllers
             string response = DecryptBusiness.Decrypt(aesKey, model.data);
 
             _logger.LogInformation("Cancel URL Postback: " + response);
-            string linkRedirect = $"{clientURL}/cancel?param1={content}&param2={response}";
+            string linkRedirect = $"{clientURL}/router?method=cancel&param1={HttpUtility.UrlEncode(content)}&param2={HttpUtility.UrlEncode(response)}";
             return Redirect(linkRedirect);
         }
 
@@ -87,7 +87,9 @@ namespace Demo.Controllers
             string aesKey = _configuration.GetValue<string>("UPC:AESKey");
             string clientURL = _configuration.GetValue<string>("UPC:ClientEndPoint");
 
+            string result = JsonConvert.SerializeObject(model);
             string response = DecryptBusiness.Decrypt(aesKey, model.data);
+
             ResultResponseData resultData = JsonConvert.DeserializeObject<ResultResponseData>(response);
             DateTime localDatetime = DateTimeOffset.FromUnixTimeSeconds(resultData.order_timestamp).LocalDateTime;
 
@@ -113,8 +115,11 @@ namespace Demo.Controllers
                 list.Add(content);
             }
 
+            list.Add($"param1={HttpUtility.UrlEncode(result)}");
+            list.Add($"param2={HttpUtility.UrlEncode(response)}");
+
             _logger.LogInformation("Result URL Postback: " + response);
-            string url = $"{clientURL}/success?" + string.Join("&", list.ToArray());
+            string url = $"{clientURL}/router?method=success&" + string.Join("&", list.ToArray());
             return Redirect(url);
         }
 
