@@ -75,7 +75,7 @@ namespace Demo.Controllers
             string content = JsonConvert.SerializeObject(model);
             string response = DecryptBusiness.Decrypt(aesKey, model.data);
 
-            _logger.LogInformation("Cancel URL Postback: " + response);
+            _logger.LogInformation("Cancel URL PostBack: " + response);
             string linkRedirect = $"{clientURL}/router?method=cancel&param1={HttpUtility.UrlEncode(content)}&param2={HttpUtility.UrlEncode(response)}";
             return Redirect(linkRedirect);
         }
@@ -89,6 +89,7 @@ namespace Demo.Controllers
 
             string result = JsonConvert.SerializeObject(model);
             string response = DecryptBusiness.Decrypt(aesKey, model.data);
+            _logger.LogInformation("Result URL PostBack: " + response);
 
             ResultResponseData resultData = JsonConvert.DeserializeObject<ResultResponseData>(response);
             DateTime payDate = DateTimeOffset.FromUnixTimeSeconds(resultData.pay_timestamp).LocalDateTime;
@@ -118,7 +119,6 @@ namespace Demo.Controllers
             list.Add($"param1={HttpUtility.UrlEncode(result)}");
             list.Add($"param2={HttpUtility.UrlEncode(response)}");
 
-            _logger.LogInformation("Result URL Postback: " + response);
             string url = $"{clientURL}/router?method=success&" + string.Join("&", list.ToArray());
             return Redirect(url);
         }
@@ -129,7 +129,7 @@ namespace Demo.Controllers
         {
             string aesKey = _configuration.GetValue<string>("UPC:AESKey");
             string response = DecryptBusiness.Decrypt(aesKey, model.data);
-            _logger.LogInformation("IPN URL Postback: " + response);
+            _logger.LogInformation("IPN URL PostBack: " + response);
         }
 
 
