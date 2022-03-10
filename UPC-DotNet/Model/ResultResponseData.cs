@@ -4,12 +4,12 @@
     {
         public string responseCode { get; set; }
         public string responseMessage { get; set; }
-        public int pay_timestamp { get; set; }
-        public int pay_amount { get; set; }
+        public long pay_timestamp { get; set; }
+        public decimal pay_amount { get; set; }
         public string language { get; set; }
         public string orderId { get; set; }
         public string billNumber { get; set; }
-        public int orderAmount { get; set; }
+        public decimal orderAmount { get; set; }
         public string orderDescription { get; set; }
         public string orderCurrency { get; set; }
         public string cardType { get; set; }

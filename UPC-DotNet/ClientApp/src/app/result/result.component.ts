@@ -16,8 +16,8 @@ export class ResultComponent {
   billNumber: string;
   orderAmount: string;
   orderCurrency: string;
-  order_timestamp: string;
-  product
+  pay_timestamp: string;
+  product;
 
   param1: string;
   param2: string;
@@ -28,7 +28,7 @@ export class ResultComponent {
 
     this.billNumber = history.state.BillNumber;
     this.orderAmount = history.state.OrderAmount;
-    this.order_timestamp = history.state.OrderTimestamp;
+    this.pay_timestamp = history.state.PayTimestamp;
 
     this.param1 = JSON.parse(history.state.ResponseData);
     this.param2 = JSON.parse(history.state.DecryptData);

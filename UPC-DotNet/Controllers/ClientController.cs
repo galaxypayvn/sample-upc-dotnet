@@ -91,7 +91,7 @@ namespace Demo.Controllers
             string response = DecryptBusiness.Decrypt(aesKey, model.data);
 
             ResultResponseData resultData = JsonConvert.DeserializeObject<ResultResponseData>(response);
-            DateTime localDatetime = DateTimeOffset.FromUnixTimeSeconds(resultData.order_timestamp).LocalDateTime;
+            DateTime payDate = DateTimeOffset.FromUnixTimeSeconds(resultData.pay_timestamp).LocalDateTime;
 
             List<string> list = new List<string>();
             foreach (PropertyInfo property in resultData.GetType().GetProperties())
@@ -104,9 +104,9 @@ namespace Demo.Controllers
                     continue;
                 }
 
-                if (name == "order_timestamp")
+                if (name == nameof(resultData.pay_timestamp))
                 {
-                    value = (localDatetime + "").ToString();
+                    value = payDate.ToString("dd/MM/yyyy HH:mm:ss");
 
                 }
 

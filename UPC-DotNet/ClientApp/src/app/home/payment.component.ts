@@ -21,7 +21,7 @@ export class PaymentComponent {
   public description = "Secure Page Demo";
   public cardtype = "atm";
   public bank = "970437";
-  public otp = true;
+  public otp = "on";
 
   public resultData: ResponseData;
 
@@ -156,7 +156,7 @@ export class PaymentComponent {
       orderDescription: this.description,
       cardType: this.cardtype,
       bank: this.bank,
-      otp: true,
+      otp: this.otp,
       request: "purchase"
     };
 

@@ -21,7 +21,7 @@ export class RouterComponent {
   billNumber: string;
   orderAmount: string;
   orderCurrency: string;
-  orderTimestamp: string;
+  pay_timestamp: string;
 
   ngOnInit() {
     console.log('Called Constructor');
@@ -41,7 +41,7 @@ export class RouterComponent {
         this.billNumber = decodeURIComponent(params['billNumber']);
         this.orderAmount = decodeURIComponent(params['orderAmount']);
         this.orderCurrency = decodeURIComponent(params['orderCurrency']);
-        this.orderTimestamp = decodeURIComponent(params['order_timestamp']);
+        this.pay_timestamp = decodeURIComponent(params['pay_timestamp']);
 
         if (this.orderCurrency == "VND") {
           this.orderAmount = this.currencyPipe.transform(this.orderAmount, 'VND', false).replace("VND", "") + " VND";
@@ -53,7 +53,7 @@ export class RouterComponent {
           state: {
             BillNumber: this.billNumber,
             OrderAmount: this.orderAmount,
-            OrderTimestamp: this.orderTimestamp,
+            PayTimestamp: this.pay_timestamp,
             ResponseData: this.param1,
             DecryptData: this.param2
           }

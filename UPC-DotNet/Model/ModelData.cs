@@ -6,7 +6,7 @@
 
     public class RequestData
     {
-        public int billNumber { get; set; }
+        public string billNumber { get; set; }
         public string firstName { get; set; }
         public string lastname { get; set; }
         public string language { get; set; }
@@ -18,7 +18,7 @@
         public string orderDescription { get; set; }
         public string cardType { get; set; }
         public string bank { get; set; }
-        public bool otp { get; set; }
+        public string otp { get; set; }
         public string request { get; set; }
     }
 
