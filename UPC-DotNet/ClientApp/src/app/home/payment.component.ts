@@ -22,7 +22,6 @@ export class PaymentComponent {
   public cardtype = "atm";
   public bank = "970437";
   public otp = true;
-  //public request = "puschase";
 
   public resultData: ResponseData;
 
@@ -34,47 +33,47 @@ export class PaymentComponent {
 
   public internationalOption = [
     {
-      item: "VISA",
       value: "VISA",
+      text: "VISA",
     },
     {
-      item: "MASTER",
-      value: "MASTER CARD",
+      value: "MASTER",
+      text: "MASTER CARD",
     }
   ];
 
   public atmOption = [
     {
-      item: "970437",
-      value: "HD bank",
+      value: "970437",
+      text: "HD bank",
     },
     {
-      item: "970403",
-      value: "Sacombank (Napas)",
+      value: "970403",
+      text: "Sacombank (Napas)",
     }
   ];
 
   // Bank Momo
   public momoOption = [
     {
-      item: "momo",
-      value: "MOMO Wallet",
+      value: "momo",
+      text: "MOMO Wallet",
     }
   ]
 
-  // Card Type
+  // Service Provider
   public cardType = [
     {
-      item: "momo",
-      value: "MOMO",
+      value: "momo",
+      text: "MOMO",
     },
     {
-      item: "international",
-      value: "International Card (VISA, MASTER CARD, JCB,...)",
+      value: "international",
+      text: "International Card (VISA, MASTER CARD, JCB,...)",
     },
     {
-      item: "atm",
-      value: "ATM",
+      value: "atm",
+      text: "ATM",
     },
   ];
 
@@ -110,7 +109,6 @@ export class PaymentComponent {
   }
 
   filterCardType(filterVal: any) {
-
     switch (filterVal) {
       case "international":
         this.data = this.internationalOption;
@@ -167,9 +165,10 @@ export class PaymentComponent {
         this.resultData = result;
         if (result.responseCode == "00" && result.endpoint != null) {
           window.location.href = result.endpoint;
-          this.loading = false;
-          this.isDisabledButton = false;
         }
+
+        this.loading = false;
+        this.isDisabledButton = false;
       }, error => console.error(error));
   }
 
