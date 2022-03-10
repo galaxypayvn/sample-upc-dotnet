@@ -68,40 +68,47 @@
   }
 </style>
 <body>
-  <div class="c-content-title-1">
-    <h3 class="c-center c-font-uppercase c-font-bold">Checkout Result</h3>
-    <div class="c-line-center c-theme-bg"></div>
-  </div>
-  <div class="c-theme-bg">
-    <p class="text">
-      <i class="fa fa-check"></i> Thank you. Your order has been received.
-    </p>
-  </div>
-  <!-- BEGIN: ORDER SUMMARY -->
-  <div class="row c-center">
-    <ul class="c-list-inline">
-      <li>
-        <h3>Order Number</h3>
-        <p>{{billNumber}}</p>
-      </li>
-      <li>
-        <h3>Date Purchased</h3>
-        <p>{{order_timestamp}}</p>
-      </li>
-      <li>
-        <h3>Total Payable</h3>
-        <p>{{orderAmount}}</p>
-      </li>
-    </ul>
-  </div>
-  <br />
-  <div class="column">
-    <h4>Response data</h4>
-    <textarea name="param11" placeholder="param1" rows="10" value="{{param1 | json}}" className="form-control"></textarea>
-  </div>
-  <div class="column">
-    <h4>Decrypt data</h4>
-    <textarea name="param2" placeholder="param2" rows="10" value="{{param2 | json}}" className="form-control"></textarea>
-  </div>
+<div class="c-content-title-1">
+  <h3 class="c-center c-font-uppercase c-font-bold">Checkout Result</h3>
+  <div class="c-line-center c-theme-bg"></div>
+</div>
+<div class="c-theme-bg">
+  <p class="text">
+    <i class="fa fa-check"></i> Thank you. Your order has been received.
+  </p>
+</div>
+<!-- BEGIN: ORDER SUMMARY -->
+<div class="row c-center">
+  <ul class="c-list-inline">
+    <li>
+      <h3>Order Number</h3>
+      <p>{{billNumber}}</p>
+    </li>
+    <li>
+      <h3>Date Purchased</h3>
+      <p>{{order_timestamp}}</p>
+    </li>
+    <li>
+      <h3>Total Payable</h3>
+      <p>{{orderAmount}}</p>
+    </li>
+  </ul>
+</div>
+<br />
+
+<div class="c-content-title-1">
+  <h3 class="mt-5 c-font-uppercase c-font-bold">
+    For Developer Only
+  </h3>
+  <div class="c-line-center c-theme-bg"></div>
+</div>
+<div class="column">
+  <h4>Response data</h4>
+  <textarea name="param11" placeholder="param1" rows="10" value="{{param1 | json}}" className="form-control"></textarea>
+</div>
+<div class="column">
+  <h4>Decrypt data</h4>
+  <textarea name="param2" placeholder="param2" rows="10" value="{{param2 | json}}" className="form-control"></textarea>
+</div>
 </body>
 </html>

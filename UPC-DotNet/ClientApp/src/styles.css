@@ -191,7 +191,7 @@ dl, ol, ul {
   padding: 40px 0;
   float: left;
   width: 50%;
-  padding: 30px;
+  padding: 10px 30px;
 }
 
 /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
