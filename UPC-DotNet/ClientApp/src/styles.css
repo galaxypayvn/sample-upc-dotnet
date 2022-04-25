@@ -174,16 +174,21 @@ dl, ol, ul {
 }
 
 
-.pading-left-10{
-    padding: 0px 0px 0px 10px;
-}
 
 .pading-left-15 {
   padding: 0px 0px 0px 15px;
 }
 
-.pading-left-20 {
+.pading-left-10 {
   padding-left: 20px;
+}
+
+.pading-right-10 {
+  padding-right: 10px;
+}
+
+.pading-top-10 {
+  padding-top: 10px;
 }
 
 .column {

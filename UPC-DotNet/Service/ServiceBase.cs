@@ -22,6 +22,7 @@ namespace Demo.Service
 
             // Headers
             request.Headers.Add("merchantKey", merchantKey);
+            //request.Headers.Add("signature", signature);
 
             // Post
             using (StreamWriter streamWriter = new StreamWriter(request.GetRequestStream()))

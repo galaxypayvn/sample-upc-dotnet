@@ -25,7 +25,7 @@
     public class PaymentData
     {
         public string billNumber { get; set; }
-        public decimal orderAmount { get; set; }
+        public string orderAmount { get; set; }
         public string orderCurrency { get; set; }
         public string orderDescription { get; set; }
         public string cardType { get; set; }
@@ -37,6 +37,8 @@
         public string client_ip_addr { get; set; }
         public long order_timestamp { get; set; }
         public UPHParameters uphParameters { get; set; } = new UPHParameters();
+        //public long hoa { get; set; }
+        //public object extraData { get; set; } //= new FlightInfo();
         public string signature { get; set; }
     }
 
