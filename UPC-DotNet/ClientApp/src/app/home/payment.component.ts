@@ -22,6 +22,7 @@ export class PaymentComponent {
   public cardtype = "atm";
   public bank = "970437";
   public otp = "on";
+  public extraData = "";
 
   public resultData: ResponseData;
 
@@ -44,12 +45,8 @@ export class PaymentComponent {
 
   public atmOption = [
     {
-      value: "970437",
-      text: "HD bank",
-    },
-    {
       value: "970403",
-      text: "Sacombank (Napas)",
+      text: "Napas",
     }
   ];
 
@@ -131,38 +128,43 @@ export class PaymentComponent {
     this.isDisabledButton = true;
 
     this.billNumber = (<HTMLInputElement>document.getElementById("billNumber")).value;
-    this.firstName = (<HTMLInputElement>document.getElementById("firstName")).value;
-    this.lastName = (<HTMLInputElement>document.getElementById("lastName")).value;
+    //this.firstName = (<HTMLInputElement>document.getElementById("firstName")).value;
+    //this.lastName = (<HTMLInputElement>document.getElementById("lastName")).value;
     this.lang = (<HTMLInputElement>document.getElementById("language")).value;
-    this.city = (<HTMLInputElement>document.getElementById("city")).value;
-    this.email = (<HTMLInputElement>document.getElementById("email")).value;
+    //this.city = (<HTMLInputElement>document.getElementById("city")).value;
+    //this.email = (<HTMLInputElement>document.getElementById("email")).value;
     this.amount = (<HTMLInputElement>document.getElementById("orderAmount")).value;
     this.currency = (<HTMLSelectElement>document.getElementById("orderCurrency")).value;
     this.description = (<HTMLInputElement>document.getElementById("orderDescription")).value;
     this.cardtype = (<HTMLSelectElement>document.getElementById("cardType")).value;
     this.bank = (<HTMLSelectElement>document.getElementById("bank")).value;
     //this.request = (<HTMLSelectElement>document.getElementById("request")).value;
+    this.extraData = (<HTMLSelectElement>document.getElementById("extraData")).value;
 
     var data = {
       billNumber: this.billNumber,
-      firstName: this.firstName,
-      lastName: this.lastName,
+      //firstName: this.firstName,
+      //lastName: this.lastName,
       language: this.lang,
-      city: this.city,
-      email: this.email,
+      //city: this.city,
+      //email: this.email,
       orderAmount: this.amount,
       orderCurrency: this.currency,
-      address: this.address,
+      //address: this.address,
       orderDescription: this.description,
       cardType: this.cardtype,
       bank: this.bank,
       otp: this.otp,
-      request: "purchase"
+      request: "purchase",
+      extraData: this.extraData
     };
 
     this.http.post<ResponseData>(this.baseUrl + 'api/client', data)
       .subscribe(result => {
         this.resultData = result;
+        if (result.responseCode == "400") {
+          alert(result.responseMessage);
+        }
         if (result.responseCode == "00" && result.endpoint != null) {
           window.location.href = result.endpoint;
         }
@@ -182,6 +184,7 @@ interface ResponseData {
   orderId: string;
   endpoint: string;
   signature: string;
+  responseMessage: string;
 }
 
 

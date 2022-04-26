@@ -8,7 +8,7 @@ namespace Demo.Service
 {
     public static class ServiceBase
     {
-        public static string Post(string url, string content, string merchantKey)
+        public static string Post(string url, string content, string merchantKey, string signature)
         {
             RemoveServerCertificate();
 
@@ -22,7 +22,7 @@ namespace Demo.Service
 
             // Headers
             request.Headers.Add("merchantKey", merchantKey);
-            //request.Headers.Add("signature", signature);
+            request.Headers.Add("signature", signature);
 
             // Post
             using (StreamWriter streamWriter = new StreamWriter(request.GetRequestStream()))

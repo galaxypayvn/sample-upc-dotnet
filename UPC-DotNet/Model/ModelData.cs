@@ -20,6 +20,7 @@
         public string bank { get; set; }
         public string otp { get; set; }
         public string request { get; set; }
+        public string extraData { get; set; }
     }
 
     public class PaymentData
@@ -38,7 +39,7 @@
         public long order_timestamp { get; set; }
         public UPHParameters uphParameters { get; set; } = new UPHParameters();
         //public long hoa { get; set; }
-        //public object extraData { get; set; } //= new FlightInfo();
+        public object extraData { get; set; } //= new FlightInfo();
         public string signature { get; set; }
     }
 

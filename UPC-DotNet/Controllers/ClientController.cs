@@ -32,32 +32,48 @@ namespace Demo.Controllers
         [Route("client")]
         public ResponseData Submit(RequestData requestData)
         {
+            // Validate ExtraData
             try
             {
-                string url = string.Empty;
+                object extraData = JsonConvert.DeserializeObject<object>(requestData.extraData);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.ToString());
+                return new ResponseData()
+                {
+                    responseCode = "400",
+                    responseMessage = "Extra data is not json",
+                };
+            }
+
+
+            try
+            {
+                string url = _configuration.GetValue<string>("UPC:EndPoint");
                 string merchantKey = _configuration.GetValue<string>("UPC:MerchantKey");
 
-                switch (requestData.cardType)
-                {
-                    case "momo":
-                        url = _configuration.GetValue<string>("UPC:MoMoEndPoint");    // IN DEVELOP
-                        break;
-                    default:
-                        url = _configuration.GetValue<string>("UPC:EndPoint");
-                        break;
-                }
+                //switch (requestData.cardType)
+                //{
+                //    case "momo":
+                //        url = _configuration.GetValue<string>("UPC:MoMoEndPoint");    // IN DEVELOP
+                //        break;
+                //    default:
+                //        url = _configuration.GetValue<string>("UPC:EndPoint");
+                //        break;
+                //}
 
                 // Post Service
                 PaymentData dataBind = BuildData(requestData);
                 string content = JsonConvert.SerializeObject(dataBind);
-                string response = ServiceBase.Post(url, content, merchantKey);
+                //string response = ServiceBase.Post(url, content, merchantKey);
 
                 // DEV
-                ////string content = JsonConvert.SerializeObject(data);
-                //_logger.LogInformation("content: " + content);
-                //string sha256Salt = _configuration.GetValue<string>("UPC:Salt");
-                //string signature = Hash(content, sha256Salt);
-                //string response = ServiceBase.Post(url, content, merchantKey, signature);
+                //string content = JsonConvert.SerializeObject(data);
+                _logger.LogInformation("content: " + content);
+                string sha256Salt = _configuration.GetValue<string>("UPC:Salt");
+                string signature = Hash(content, sha256Salt);
+                string response = ServiceBase.Post(url, content, merchantKey, signature);
 
                 // conver json result to object
                 _logger.LogInformation("Response: " + response);
@@ -68,7 +84,11 @@ namespace Demo.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
-                return new ResponseData();
+                return new ResponseData()
+                {
+                    responseCode = "400",
+                    responseMessage = "Extra data is not json",
+                };
             }
         }
 
@@ -209,11 +229,10 @@ namespace Demo.Controllers
 
         public PaymentData BuildData(RequestData requestData)
         {
-            string sha256Salt = _configuration.GetValue<string>("UPC:Salt"); ///// UAT
-            string extraJson =
-              "{\"customer\":{\"first_name\":\"Ryleigh\",\"last_name\":\"Rowan\",\"identity_number\":\"9184091267\",\"email\":\"Luna@gmail.com\",\"phone_number\":\"0973860571\",\"phone_type\":\"lqQPi0GSkY\",\"gender\":\"F\",\"date_of_birth\":\"20050507\",\"title\":\"Mrs\"},\"device\":{\"first_name\":null,\"last_name\":null,\"identity_number\":null,\"email\":null,\"phone_number\":null,\"phone_type\":null,\"gender\":null,\"date_of_birth\":null,\"title\":null},\"airline\":{\"record_locator\":\"oYnTcyPaJ4\",\"flights\":[{\"airline_code\":\"FvZ5fsrDKm\",\"carrier_code\":\"fY1QUIT8Gs\",\"journey_type\":1931885996,\"flight_number\":950679163,\"travel_class\":\"ifxCnjyyB3\",\"exchange_ticket_number\":\"sDxvhHiFMJ\",\"departure_airport\":\"mc4KDBOKxP\",\"departure_date\":\"YQ8YbQ0fEe\",\"departure_time\":\"21/04/202213:31:05\",\"departure_tax\":\"tJeyh9nDC2\",\"arrival_airport\":\"Tq5ZU9d1bD\",\"arrival_date\":\"ueA944TPZE\",\"arrival_time\":\"21/04/202203:30:21\",\"fees\":712003610,\"taxes\":749099820,\"fare\":78903200282,\"fare_basis_code\":\"4bya5wMZ9Z\",\"origin_country\":\"s0dfCHCOCa\"}],\"passengers\":[{\"pax_id\":\"rjX3KvdmdR\",\"pax_type\":\"DNtJOL1hWI\",\"first_name\":\"Nova\",\"last_name\":\"Adrian\",\"title\":\"Mrs\",\"gender\":\"M\",\"date_of_birth\":\"20220420\",\"identity_number\":\"6dJSKHst0j\",\"name_in_pnr\":\"Q6cI88XO0s\",\"member_ticket\":\"4huqVGMa7Q\"}]},\"billing\":{\"country_code\":null,\"state_provine\":null,\"city_name\":null,\"postal_code\":null,\"street_number\":null,\"address_line1\":null,\"address_line2\":null},\"shipping\":{\"country_code\":null,\"state_provine\":null,\"city_name\":null,\"postal_code\":null,\"street_number\":null,\"address_line1\":null,\"address_line2\":null}}";
+            //string sha256Salt = _configuration.GetValue<string>("UPC:Salt"); ///// UAT
+            object extraData = JsonConvert.DeserializeObject<object>(requestData.extraData);
 
-            ExtraData extra = new ExtraData();
+            //ExtraData extra = new ExtraData();
             ///extra.passengers.Add(new Passenger());
             ///extra.passengers.Add(new Passenger());
             // Body
@@ -237,28 +256,27 @@ namespace Demo.Controllers
                     agent = "Chrome 96.0",
                     device = "Windows",
                 },
-                //extraData = JsonConvert.DeserializeObject<object>(extraJson),
-                signature = ""
+                extraData = extraData
             };
 
             // UAT
             // Create Signature 
-            Dictionary<string, object> properties = FlattenObject(data);
-            List<string> keys = properties.Keys.OrderBy(i => i, StringComparer.Ordinal).ToList();
-            StringBuilder builder = new StringBuilder();
-            foreach (string key in keys)
-            {
-                builder.Append(properties[key]);
-            }
+            //Dictionary<string, object> properties = FlattenObject(data);
+            //List<string> keys = properties.Keys.OrderBy(i => i, StringComparer.Ordinal).ToList();
+            //StringBuilder builder = new StringBuilder();
+            //foreach (string key in keys)
+            //{
+            //    builder.Append(properties[key]);
+            //}
 
-            _logger.LogInformation("Flatten Object: " + builder.ToString());
+            //_logger.LogInformation("Flatten Object: " + builder.ToString());
 
-            string signature = Hash(builder.ToString(), sha256Salt);
-            data.signature = signature;
-            _logger.LogInformation("Signature: " + signature);
+            //string signature = Hash(builder.ToString(), sha256Salt);
+            //data.signature = signature;
+            //_logger.LogInformation("Signature: " + signature);
 
-            string content = JsonConvert.SerializeObject(data);
-            _logger.LogInformation("Request: " + content);
+            //string content = JsonConvert.SerializeObject(data);
+            //_logger.LogInformation("Request: " + content);
 
             return data;
         }
