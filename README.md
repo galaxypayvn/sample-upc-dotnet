@@ -20,7 +20,7 @@ https://dotnet.microsoft.com/en-us/download/dotnet/5.0
 ========================================================================
 
 Live Demo
-https://uat-merchant.galaxypay.vn:8000
+https://uat-merchant.galaxypay.vn
 
 Integration Documents
 https://gitlab.com/gpay-sample/upc/upc-dotnet/-/tree/master/Documents
