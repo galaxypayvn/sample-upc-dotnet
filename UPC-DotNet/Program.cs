@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
+using Serilog;
+
 namespace Demo
 {
     public class Program
@@ -16,6 +18,7 @@ namespace Demo
                 {
                     webBuilder
                     .UseStartup<Startup>();
-                });
+                })
+                .UseSerilog();
     }
 }

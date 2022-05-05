@@ -5,6 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using Serilog;
+using Serilog.Debugging;
+using Serilog.Exceptions;
+
 namespace Demo
 {
     public class Startup
@@ -25,11 +29,24 @@ namespace Demo
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            SelfLog.Enable(Serilog.Log.Error);
+            LoggerConfiguration loggerConfiguration = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithMachineName()
+                .Enrich.WithEnvironmentName()
+                .Enrich.WithExceptionDetails()
+                .ReadFrom.Configuration(Configuration)
+                .WriteTo.Console();
+
+            Serilog.Log.Logger = loggerConfiguration.CreateLogger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //app.UseSerilogRequestLogging();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
