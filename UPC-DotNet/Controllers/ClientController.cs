@@ -64,15 +64,11 @@ namespace Demo.Controllers
                 //}
 
                 // Post Service
-                PaymentData dataBind = BuildData(requestData);
-                string content = JsonConvert.SerializeObject(dataBind);
-                //string response = ServiceBase.Post(url, content, merchantKey);
-
-                // DEV
-                //string content = JsonConvert.SerializeObject(data);
+                PaymentData dataBind = BuildData(requestData); // Data request
+                string content = JsonConvert.SerializeObject(dataBind); 
                 _logger.LogInformation("content: " + content);
                 string sha256Salt = _configuration.GetValue<string>("UPC:Salt");
-                string signature = Hash(content, sha256Salt);
+                string signature = Hash(content, sha256Salt); // Hash 256
                 string response = ServiceBase.Post(url, content, merchantKey, signature);
 
                 // conver json result to object
@@ -86,8 +82,8 @@ namespace Demo.Controllers
                 _logger.LogError(e.ToString());
                 return new ResponseData()
                 {
-                    responseCode = "400",
-                    responseMessage = "Extra data is not json",
+                    responseCode = "500",
+                    responseMessage = "Error!!!",
                 };
             }
         }

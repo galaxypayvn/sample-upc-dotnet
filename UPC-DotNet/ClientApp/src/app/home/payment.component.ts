@@ -22,12 +22,113 @@ export class PaymentComponent {
   public cardtype = "atm";
   public bank = "970437";
   public otp = "on";
-  public extraData = "";
+  public json = "";
+  public extraData = {
+    customer: {
+      firstName: "Jacob",
+      lastName: "Savannah",
+      identityNumber: "6313126925",
+      email: "Paisley@gmail.com",
+      phoneNumber: "0580821083",
+      phoneType: "CjcFqIPAtc",
+      gender: "F",
+      dateOfBirth: "19920117",
+      title: "Mr"
+    },
+    device: {
+      browser: "uL3ydX2Pcv",
+      fingerprint: "ZdiijSPr0M",
+      hostName: "JBddmayji5",
+      ipAddress: "KU9CoAMTub",
+      deviceID: "woB325my3h",
+      deviceModel: "nPEDP9SyHc"
+    },
+    application: {
+      applicationID: "V2hLZeYRHs",
+      applicationChannel: "Mobile"
+    },
+    airline: {
+      recordLocator: "VDknTdszRc",
+      journeyType: 279182634,
+      departureAirport: "Dm5W8daux6",
+      departureDateTime: "26/04/202206:31:22",
+      arrivalAirport: "DTMKu99Ucx",
+      arrivalDateTime: "26/04/202215:18:30",
+      services: [{
+        serviceCode: "iOrEyae8km",
+        quantity: 687449710,
+        amount: 80000,
+        tax: 0,
+        fee: 10000,
+        totalAmount: 80000,
+        currency: "USD"
+      }, {
+        serviceCode: "YltyBWqm00",
+        quantity: 391314729,
+        amount: 60000,
+        tax: 0,
+        fee: 10000,
+        totalAmount: 100000,
+        currency: "USD"
+      }
+      ],
+      flights: [{
+        airlineCode: "qHRJ0vSJbk",
+        carrierCode: "lVPkqwaoDr",
+        flightNumber: 304498347,
+        travelClass: "OET2hayLmS",
+        departureAirport: "J5OF0jDZ0A",
+        departureDate: "BBg2Vv5RrS",
+        departureTime: "26/04/202213:48:33",
+        departureTax: "n2ILRrqiS8",
+        arrivalAirport: "u3laQZXoff",
+        arrivalDate: "VR0hUprpMp",
+        arrivalTime: "26/04/202203:33:43",
+        fees: 10000,
+        taxes: 0,
+        fares: 50000,
+        fareBasisCode: "DwzXajRwiv",
+        originCountry: "A4uyesF2er"
+      }
+      ],
+      passengers: [{
+        passengerID: "uew9dL5JAI",
+        passengerType: "SouBmUpryn",
+        firstName: "Muhammad",
+        lastName: "Kinsley",
+        title: "Mrs",
+        gender: "F",
+        dateOfBirth: "20220425",
+        identityNumber: "2KoxDO9XYv",
+        nameInPNR: "jGFPV12jcA",
+        memberTicket: "fwmplDrraT"
+      }
+      ]
+    },
+    billing: {
+      countryCode: "g5e4oEw69i",
+      stateProvine: "minG6rGOoq",
+      cityName: "Sheffield",
+      postalCode: "LB9u7HOX9j",
+      streetNumber: "941",
+      addressLine1: "115TheCrescent",
+      addressLine2: "2E82UBmudr"
+    },
+    shipping: {
+      countryCode: null,
+      stateProvine: null,
+      cityName: null,
+      postalCode: null,
+      streetNumber: null,
+      addressLine1: null,
+      addressLine2: null
+    }
+  };
 
   public resultData: ResponseData;
 
   bankSelect = "momo";
-  cardTypeSelect = "momo";
+  cardTypeSelect = "Wallet";
 
   public loading: boolean = false;
   public isDisabledButton: boolean = false;
@@ -61,8 +162,8 @@ export class PaymentComponent {
   // Service Provider
   public cardType = [
     {
-      value: "momo",
-      text: "MOMO",
+      value: "Wallet",
+      text: "Wallet",
     },
     {
       value: "international",
@@ -139,7 +240,7 @@ export class PaymentComponent {
     this.cardtype = (<HTMLSelectElement>document.getElementById("cardType")).value;
     this.bank = (<HTMLSelectElement>document.getElementById("bank")).value;
     //this.request = (<HTMLSelectElement>document.getElementById("request")).value;
-    this.extraData = (<HTMLSelectElement>document.getElementById("extraData")).value;
+    this.json = (<HTMLSelectElement>document.getElementById("extraData")).value;
 
     var data = {
       billNumber: this.billNumber,
@@ -156,15 +257,22 @@ export class PaymentComponent {
       bank: this.bank,
       otp: this.otp,
       request: "purchase",
-      extraData: this.extraData
+      extraData: this.json
     };
 
     this.http.post<ResponseData>(this.baseUrl + 'api/client', data)
       .subscribe(result => {
         this.resultData = result;
+
+        if (result.responseCode == "500") {
+          alert(result.responseMessage);
+        }
+
         if (result.responseCode == "400") {
           alert(result.responseMessage);
         }
+
+        // success
         if (result.responseCode == "00" && result.endpoint != null) {
           window.location.href = result.endpoint;
         }
