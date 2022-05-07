@@ -7,6 +7,12 @@
 *.userosscache
 *.sln.docstates
 
+# Rider files
+.idea
+
+# Mac OS files
+.bak
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

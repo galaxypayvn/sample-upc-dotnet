@@ -52,11 +52,8 @@
 
     public class ResponseData
     {
-        public string responseCode { get; set; }
-        public string orderId { get; set; }
+        public string transactionId { get; set; }
         public string endpoint { get; set; }
-        public string responseMessage { get; set; }
-        public string signature { get; set; }
     }
 
     public class MomoRequestData

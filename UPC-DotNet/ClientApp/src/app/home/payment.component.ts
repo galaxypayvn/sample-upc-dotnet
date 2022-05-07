@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+﻿import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Component, Inject, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
@@ -127,8 +127,7 @@ export class PaymentComponent {
 
   public resultData: ResponseData;
 
-  bankSelect = "momo";
-  cardTypeSelect = "Wallet";
+ 
 
   public loading: boolean = false;
   public isDisabledButton: boolean = false;
@@ -136,7 +135,7 @@ export class PaymentComponent {
   public internationalOption = [
     {
       value: "VISA",
-      text: "VISA",
+      text: "VISA CARD",
     },
     {
       value: "MASTER",
@@ -147,7 +146,7 @@ export class PaymentComponent {
   public atmOption = [
     {
       value: "970403",
-      text: "Napas",
+      text: "NAPAS",
     }
   ];
 
@@ -175,7 +174,9 @@ export class PaymentComponent {
     },
   ];
 
-  public data = this.momoOption;
+  bankSelect = "970403";
+  cardTypeSelect = "atm";
+  public data = this.atmOption;
 
   constructor(public http: HttpClient,
     @Inject('BASE_URL')
@@ -214,9 +215,9 @@ export class PaymentComponent {
         break;
       case "atm":
         this.data = this.atmOption;
-        this.bankSelect = "970437";
+        this.bankSelect = "970403";
         break;
-      case "momo":
+      case "Wallet":
         this.data = this.momoOption;
         this.bankSelect = "momo";
         break;
@@ -273,8 +274,8 @@ export class PaymentComponent {
         }
 
         // success
-        if (result.responseCode == "00" && result.endpoint != null) {
-          window.location.href = result.endpoint;
+        if (result.responseCode == "200" && result.responseData.endpoint != null) {
+          window.location.href = result.responseData.endpoint;
         }
 
         this.loading = false;
@@ -289,10 +290,13 @@ export class PaymentComponent {
 
 interface ResponseData {
   responseCode: string;
-  orderId: string;
-  endpoint: string;
-  signature: string;
+  responseData: OrderData;
   responseMessage: string;
+}
+
+interface OrderData {
+  transactionId: string;
+  endpoint: string;
 }
 
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 
@@ -18,10 +18,10 @@ export class RouterComponent {
 
   // result
   responseCode: string;
-  billNumber: string;
+  orderNumber: string;
   orderAmount: string;
   orderCurrency: string;
-  pay_timestamp: string;
+  orderDateTime: string;
 
   ngOnInit() {
     console.log('Called Constructor');
@@ -38,10 +38,10 @@ export class RouterComponent {
 
       if (this.method == 'success') {
         this.responseCode = decodeURIComponent(params['responseCode']);
-        this.billNumber = decodeURIComponent(params['billNumber']);
+        this.orderNumber = decodeURIComponent(params['orderNumber']);
         this.orderAmount = decodeURIComponent(params['orderAmount']);
         this.orderCurrency = decodeURIComponent(params['orderCurrency']);
-        this.pay_timestamp = decodeURIComponent(params['pay_timestamp']);
+        this.orderDateTime = decodeURIComponent(params['orderDateTime']);
 
         if (this.orderCurrency == "VND") {
           this.orderAmount = this.currencyPipe.transform(this.orderAmount, 'VND', false).replace("VND", "") + " VND";
@@ -51,9 +51,9 @@ export class RouterComponent {
 
         this.router.navigateByUrl('/success', {
           state: {
-            BillNumber: this.billNumber,
+            BillNumber: this.orderNumber,
             OrderAmount: this.orderAmount,
-            PayTimestamp: this.pay_timestamp,
+            PayTimestamp: this.orderDateTime,
             ResponseData: this.param1,
             DecryptData: this.param2
           }

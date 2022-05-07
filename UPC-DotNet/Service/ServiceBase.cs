@@ -21,7 +21,7 @@ namespace Demo.Service
             request.Timeout = 30 * 1000; // 30s
 
             // Headers
-            request.Headers.Add("merchantKey", merchantKey);
+            request.Headers.Add("apiKey", merchantKey);
             request.Headers.Add("signature", signature);
 
             // Post
