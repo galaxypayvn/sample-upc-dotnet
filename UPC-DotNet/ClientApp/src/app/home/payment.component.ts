@@ -106,28 +106,28 @@ export class PaymentComponent {
       ]
     },
     billing: {
-      countryCode: "g5e4oEw69i",
-      stateProvine: "minG6rGOoq",
-      cityName: "Sheffield",
-      postalCode: "LB9u7HOX9j",
-      streetNumber: "941",
-      addressLine1: "115TheCrescent",
-      addressLine2: "2E82UBmudr"
+      countryCode: "vn",
+      stateProvine: "Hồ Chí Minh",
+      cityName: "Nhà Bè",
+      postalCode: "",
+      streetNumber: "673",
+      addressLine1: "Đường Nguyễn Hữu Thọ",
+      addressLine2: ""
     },
     shipping: {
-      countryCode: null,
-      stateProvine: null,
-      cityName: null,
-      postalCode: null,
-      streetNumber: null,
-      addressLine1: null,
-      addressLine2: null
+      countryCode: "vn",
+      stateProvine: "Hồ Chí Minh",
+      cityName: "Nhà Bè",
+      postalCode: "",
+      streetNumber: "673",
+      addressLine1: "Đường Nguyễn Hữu Thọ",
+      addressLine2: ""
     }
   };
 
   public resultData: ResponseData;
 
- 
+
 
   public loading: boolean = false;
   public isDisabledButton: boolean = false;
@@ -146,7 +146,7 @@ export class PaymentComponent {
   public atmOption = [
     {
       value: "970403",
-      text: "NAPAS",
+      text: "NAPAS (VIETNAM LOCAL BANKS)",
     }
   ];
 
@@ -154,7 +154,7 @@ export class PaymentComponent {
   public momoOption = [
     {
       value: "momo",
-      text: "MOMO Wallet",
+      text: "MOMO WALLET",
     }
   ]
 
@@ -162,15 +162,15 @@ export class PaymentComponent {
   public cardType = [
     {
       value: "Wallet",
-      text: "Wallet",
+      text: "WALLET",
     },
     {
       value: "international",
-      text: "International Card (VISA, MASTER CARD, JCB,...)",
+      text: "INTERNATIONAL CARD (VISA, MASTER CARD, JCB,...)",
     },
     {
       value: "atm",
-      text: "ATM",
+      text: "ATM CARD",
     },
   ];
 
@@ -221,7 +221,7 @@ export class PaymentComponent {
         this.data = this.momoOption;
         this.bankSelect = "momo";
         break;
-    } 
+    }
   }
 
   public inProcess() {

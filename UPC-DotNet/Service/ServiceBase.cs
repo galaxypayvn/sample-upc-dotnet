@@ -1,102 +1,87 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Demo.Service
+namespace Demo.Service;
+
+public static class ServiceBase
 {
-    public static class ServiceBase
+    public static string Post(string url, string content, string merchantKey, string signature)
     {
-        public static string Post(string url, string content, string merchantKey, string signature)
+        RemoveServerCertificate();
+
+        // Request
+        HttpWebRequest request = WebRequest.CreateHttp(url);
+        request.ContentType = "application/json";
+        request.Accept = "application/json";
+        request.AllowAutoRedirect = true;
+        request.Method = WebRequestMethods.Http.Post;
+        request.Timeout = 30 * 1000; // 30s
+
+        // Headers
+        request.Headers.Add("apiKey", merchantKey);
+        request.Headers.Add("signature", signature);
+
+        // Post
+        using (StreamWriter streamWriter = new StreamWriter(request.GetRequestStream()))
         {
-            RemoveServerCertificate();
-
-            // Request
-            System.Net.HttpWebRequest request = WebRequest.CreateHttp(url);
-            request.ContentType = "application/json";
-            request.AllowAutoRedirect = true;
-            request.Accept = "application/json";
-            request.Method = WebRequestMethods.Http.Post;
-            request.Timeout = 30 * 1000; // 30s
-
-            // Headers
-            request.Headers.Add("apiKey", merchantKey);
-            request.Headers.Add("signature", signature);
-
-            // Post
-            using (StreamWriter streamWriter = new StreamWriter(request.GetRequestStream()))
-            {
-                streamWriter.Write(content);
-                streamWriter.Flush();
-            }
-
-            string response = GetResponse(request);
-            return response;
+            streamWriter.Write(content);
+            streamWriter.Flush();
         }
 
-        private static string GetResponse(HttpWebRequest request)
+        string response = GetResponse(request);
+        return response;
+    }
+
+    private static string GetResponse(HttpWebRequest request)
+    {
+        string content;
+        try
         {
-            string content;
-            try
-            {
-                using (WebResponse response = request.GetResponse())
-                {
-                    content = GetContent(response);
-                }
+            using WebResponse response = request.GetResponse();
+            content = GetContent(response);
 
-                return content;
-            }
-            catch (WebException exception)
-            {
-                if (exception.Status == WebExceptionStatus.Timeout)
-                {
-                    throw;
-                }
-
-                using (HttpWebResponse response = (HttpWebResponse)exception.Response)
-                {
-                    content = GetContent(response);
-                }
-
-                return content;
-            }
+            return content;
         }
-
-        private static string GetContent(WebResponse response)
+        catch (WebException exception)
         {
-            if (response == null)
+            if (exception.Status == WebExceptionStatus.Timeout)
             {
-                return string.Empty;
+                throw;
             }
 
-            using (Stream stream = response.GetResponseStream())
-            {
-                if (stream == null)
-                {
-                    return string.Empty;
-                }
+            using HttpWebResponse response = (HttpWebResponse)exception.Response;
+            content = GetContent(response);
 
-                using (StreamReader streamReader = new StreamReader(stream))
-                {
-                    return streamReader.ReadToEnd();
-                }
-            }
+            return content;
         }
+    }
 
-
-        public static bool RemoveCertificateValidate(
-            object sender,
-            X509Certificate cert,
-            X509Chain chain,
-            SslPolicyErrors error)
+    private static string GetContent(WebResponse response)
+    {
+        using Stream stream = response?.GetResponseStream();
+        if (stream == null)
         {
-            return true;
+            return string.Empty;
         }
 
-        public static void RemoveServerCertificate()
-        {
-            ServicePointManager.ServerCertificateValidationCallback += RemoveCertificateValidate;
-        }
+        using StreamReader streamReader = new StreamReader(stream);
+        return streamReader.ReadToEnd();
+    }
+
+
+    private static bool RemoveCertificateValidate(
+        object sender,
+        X509Certificate cert,
+        X509Chain chain,
+        SslPolicyErrors error)
+    {
+        return true;
+    }
+
+    private static void RemoveServerCertificate()
+    {
+        ServicePointManager.ServerCertificateValidationCallback += RemoveCertificateValidate;
     }
 }
