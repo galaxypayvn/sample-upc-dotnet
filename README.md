@@ -8,8 +8,8 @@ https://dotnet.microsoft.com/en-us/download/dotnet/5.0
 
 2. Edit setting in file appsetting.json
 
-- UPC.ClientEndPoint to public domain of your website to receive response postback from Result & IPN
-- UPC.MerchantKey to the key that you receive from UPC
+- UPC.Salt to sign and verify signature.
+- UPC.APIKey to the key that you receive from UPC.
 
 
 3. Run

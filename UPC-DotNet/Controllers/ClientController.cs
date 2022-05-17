@@ -63,7 +63,7 @@ namespace Demo.Controllers
             try
             {
                 string url = _configuration.GetValue<string>("UPC:EndPoint");
-                string merchantKey = _configuration.GetValue<string>("UPC:MerchantKey");
+                string apiKey = _configuration.GetValue<string>("UPC:APIKey");
 
                 OrderData order = new();
                 order.OrderID = Guid.NewGuid().ToString();
@@ -78,7 +78,7 @@ namespace Demo.Controllers
                 order.Language = requestData.Language;
 
                 ServiceRequestData<OrderData> request = new();
-                request.RequestID = Guid.NewGuid().ToString();
+                request.RequestID = Guid.NewGuid().ToString("N");
                 request.RequestDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
                 request.RequestData = order;
 
@@ -88,7 +88,7 @@ namespace Demo.Controllers
                 // Request to API /transaction
                 string sha256Salt = _configuration.GetValue<string>("UPC:Salt");
                 string signature = Hash(content, sha256Salt); // Hash 256
-                string response = ServiceBase.Post(url, content, merchantKey, signature);
+                string response = ServiceBase.Post(url, content, apiKey, signature);
 
                 // Response
                 _logger.LogInformation("Response: " + response);

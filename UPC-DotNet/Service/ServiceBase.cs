@@ -7,7 +7,7 @@ namespace Demo.Service;
 
 public static class ServiceBase
 {
-    public static string Post(string url, string content, string merchantKey, string signature)
+    public static string Post(string url, string content, string apiKey, string signature)
     {
         RemoveServerCertificate();
 
@@ -20,7 +20,7 @@ public static class ServiceBase
         request.Timeout = 30 * 1000; // 30s
 
         // Headers
-        request.Headers.Add("apiKey", merchantKey);
+        request.Headers.Add("apiKey", apiKey);
         request.Headers.Add("signature", signature);
 
         // Post

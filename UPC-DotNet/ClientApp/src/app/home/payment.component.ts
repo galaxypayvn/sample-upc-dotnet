@@ -265,16 +265,11 @@ export class PaymentComponent {
       .subscribe(result => {
         this.resultData = result;
 
-        if (result.responseCode == "500") {
+        if (result.responseCode != "200") {
           alert(result.responseMessage);
         }
-
-        if (result.responseCode == "400") {
-          alert(result.responseMessage);
-        }
-
         // success
-        if (result.responseCode == "200" && result.responseData.endpoint != null) {
+        else if (result.responseCode == "200" && result.responseData.endpoint != null) {
           window.location.href = result.responseData.endpoint;
         }
 
