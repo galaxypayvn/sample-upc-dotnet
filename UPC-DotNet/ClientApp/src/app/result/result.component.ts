@@ -32,25 +32,5 @@ export class ResultComponent {
 
     this.param1 = JSON.parse(history.state.ResponseData);
     this.param2 = JSON.parse(history.state.DecryptData);
-
-    //this.route.queryParams.subscribe(params => {
-    //  this.responseCode = decodeURIComponent(params['responseCode']);
-    //  this.billNumber = decodeURIComponent(params['billNumber']);
-    //  this.orderAmount = decodeURIComponent(params['orderAmount']);
-    //  this.orderCurrency = decodeURIComponent(params['orderCurrency']);
-    //  this.order_timestamp = decodeURIComponent(params['order_timestamp']);
-
-    //  this.param1 = decodeURIComponent(params['param1']);
-    //  this.param2 = decodeURIComponent(params['param2']);
-
-    //  if (this.orderCurrency == "VND") {
-    //    this.orderAmount = this.currencyPipe.transform(this.orderAmount, 'VND', false).replace("VND", "") + " VND";
-    //  } else {
-    //    this.orderAmount = this.currencyPipe.transform(this.orderAmount, 'USD', false).replace("USD", "") + " USD";
-    //  }
-
-    //  this.param1 = JSON.parse(this.param1);
-    //  this.param2 = JSON.parse(this.param2);
-    //});
   }
 }

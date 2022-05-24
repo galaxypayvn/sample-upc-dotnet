@@ -1,21 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-
-using System;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 using Demo.Model;
 using Demo.Service;
-using Microsoft.Extensions.Configuration;
-using UPCDotNet.Model;
-using System.Text.Json;
-using System.Globalization;
-using System.Text.Encodings.Web;
-using System.Text.Json.Serialization;
+
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+
+using UPCDotNet.Model;
 
 namespace Demo.Controllers
 {
@@ -34,12 +36,37 @@ namespace Demo.Controllers
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
 
+        private static ConcurrentDictionary<string, TransactionData> _Transactions = new();
+
         public ClientController(ILogger<ClientController> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
         }
 
+        [HttpPost]
+        [Route("transaction")]
+        public TransactionData Get([FromBody] TransactionData transaction)
+        {
+            if (string.IsNullOrWhiteSpace(transaction?.TransactionID))
+            {
+                return new TransactionData();
+            }
+
+            if (_Transactions.TryRemove(transaction.TransactionID, out transaction) == false)
+            {
+                transaction = new TransactionData();
+            }
+
+            return transaction;
+        }
+
+        private static void SaveCache(TransactionData transaction)
+        {
+            _Transactions.TryAdd(transaction.TransactionID, transaction);
+        }
+        
+        
         [HttpPost]
         [Route("client")]
         public ServiceResponseData<ResponseData> Submit(RequestData requestData)
@@ -139,12 +166,23 @@ namespace Demo.Controllers
             string response = FromBase64String(model.Data);
             _logger.LogInformation("Cancel URL Callback: " + response);
 
-            string content = JsonSerializer.Serialize(model);
-            List<string> parameters = new();
-            parameters.Add($"param1={HttpUtility.UrlEncode(content)}");
-            parameters.Add($"param2={HttpUtility.UrlEncode(response)}");
+            ServiceResponseData<OrderResponseData> serviceResponse =
+                JsonSerializer.Deserialize<ServiceResponseData<OrderResponseData>>(response, JsonOptions);
             
-            string url = $"{ClientUrl}/router?method=cancel&" + string.Join("&", parameters.ToArray());
+            OrderResponseData order = serviceResponse?.ResponseData ??  new OrderResponseData();
+            if (string.IsNullOrWhiteSpace(order.TransactionID))
+            {
+                order.TransactionID = Guid.NewGuid().ToString();
+            }
+            
+            string content = JsonSerializer.Serialize(model);
+            TransactionData transaction = new();
+            transaction.TransactionID = order.TransactionID;
+            transaction.RawContent = content;
+            transaction.ResponseContent = response;
+            SaveCache(transaction);
+            
+            string url = $"{ClientUrl}/router?method=cancel&transactionID=" + order.TransactionID;
             return Redirect(url);
         }
         
@@ -168,20 +206,27 @@ namespace Demo.Controllers
             string response = FromBase64String(model.Data);
             _logger.LogInformation("Result URL Callback: " + response);
 
-            ServiceResponseData<OrderData> serviceResponse =
-                JsonSerializer.Deserialize<ServiceResponseData<OrderData>>(response, JsonOptions);
-            OrderData order = serviceResponse?.ResponseData ?? new();
+            ServiceResponseData<OrderResponseData> serviceResponse =
+                JsonSerializer.Deserialize<ServiceResponseData<OrderResponseData>>(response, JsonOptions);
+            
+            OrderResponseData order = serviceResponse?.ResponseData ??  new OrderResponseData();
+            if (string.IsNullOrWhiteSpace(order.TransactionID))
+            {
+                order.TransactionID = Guid.NewGuid().ToString();
+            }
             
             string content = JsonSerializer.Serialize(model);
-            List<string> parameters = new();
-            parameters.Add($"responseCode={HttpUtility.UrlEncode(serviceResponse?.ResponseCode)}");
-            parameters.Add($"orderNumber={HttpUtility.UrlEncode(order.OrderNumber)}");
-            parameters.Add($"orderAmount={HttpUtility.UrlEncode(order.OrderAmount.ToString(CultureInfo.InvariantCulture))}");
-            parameters.Add($"orderCurrency={HttpUtility.UrlEncode(order.OrderCurrency)}");
-            parameters.Add($"orderDateTime={HttpUtility.UrlEncode(FormatDate(order.OrderDateTime))}");
-            parameters.Add($"param1={HttpUtility.UrlEncode(content)}");
-            parameters.Add($"param2={HttpUtility.UrlEncode(response)}");
-            string url = $"{ClientUrl}/router?method=success&" + string.Join("&", parameters.ToArray());
+            TransactionData transaction = new();
+            transaction.TransactionID = order.TransactionID;
+            transaction.RawContent = content;
+            transaction.ResponseContent = response;
+            transaction.OrderNumber = order.OrderNumber;
+            transaction.OrderAmount = order.OrderAmount.ToString(CultureInfo.InvariantCulture);
+            transaction.OrderCurrency = order.OrderCurrency;
+            transaction.OrderDateTime = FormatDate(order.OrderDateTime);
+            SaveCache(transaction);
+            
+            string url = $"{ClientUrl}/router?method=success&transactionID=" + order.TransactionID;
             return Redirect(url);
         }
         

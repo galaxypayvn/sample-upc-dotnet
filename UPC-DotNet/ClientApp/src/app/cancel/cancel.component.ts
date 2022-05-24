@@ -10,18 +10,16 @@ export class CancelComponent {
 
   param1: string;
   param2: string;
-  product
+  transaction
 
   ngOnInit() {
-    console.log('Called Constructor');
-    this.product = history.state.name;
-
-    console.log(this.product);
-
-    this.route.queryParams.subscribe(params => {
-      this.param1 = decodeURIComponent(params['param1']);
-      this.param2 = decodeURIComponent(params['param2']);
-    });
+    this.transaction = history.state;
+    console.log(this.transaction);
+    //
+    // this.route.queryParams.subscribe(params => {
+    //   this.param1 = decodeURIComponent(params['param1']);
+    //   this.param2 = decodeURIComponent(params['param2']);
+    // });
 
     this.param1 = JSON.parse(history.state.ResponseData);
     this.param2 = JSON.parse(history.state.DecryptData);
