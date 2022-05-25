@@ -29,6 +29,9 @@ export class RouterComponent {
   orderCurrency: string;
   orderDateTime: string;
 
+  ipnRawContent: string;
+  ipnResponseContent ; string;
+
   queryTransaction() {
     this.http
       .post<ResponseData>(this.baseUrl + 'api/transaction', {transactionID: this.transactionID})
@@ -41,13 +44,16 @@ export class RouterComponent {
         this.orderCurrency = result.orderCurrency;
         this.orderDateTime = result.orderDateTime;
 
+        this.ipnRawContent = result.ipnRawContent;
+        this.ipnResponseContent = result.ipnResponseContent;
+
         this.showResult();
       }, error => console.error(error));
   }
 
   showResult() {
     if (this.method == 'cancel') {
-      this.router.navigateByUrl('/cancel', {
+      this.router.navigateByUrl('/cancel?transactionID=' + this.transactionID, {
         state: {
           ResponseData: this.rawContent,
           DecryptData: this.responseContent
@@ -63,13 +69,8 @@ export class RouterComponent {
         this.orderAmount = this.currencyPipe.transform(this.orderAmount, 'USD', false).replace("USD", "") + " USD";
       }
 
-      this.router.navigateByUrl('/success', {
+      this.router.navigateByUrl('/success?transactionID=' + this.transactionID, {
         state: {
-          BillNumber: this.orderNumber,
-          OrderAmount: this.orderAmount,
-          PayTimestamp: this.orderDateTime,
-          ResponseData: this.rawContent,
-          DecryptData: this.responseContent
         }
       });
     }
@@ -77,7 +78,6 @@ export class RouterComponent {
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-
       this.method = decodeURIComponent(params['method']);
       this.transactionID = decodeURIComponent(params['transactionID']);
       this.queryTransaction()
@@ -93,4 +93,6 @@ interface ResponseData {
   rawContent: string;
   responseContent: string;
   responseCode: string;
+  ipnRawContent: string;
+  ipnResponseContent ; string;
 }

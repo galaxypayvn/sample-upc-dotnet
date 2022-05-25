@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 
 using Serilog;
 
-namespace Demo;
+namespace UPC.DotNet;
 
 public static class Program
 {
@@ -14,6 +14,7 @@ public static class Program
 
     private static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
+            .UseWindowsService()
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder

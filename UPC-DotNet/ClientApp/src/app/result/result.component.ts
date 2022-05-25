@@ -1,6 +1,7 @@
-import { Component, Inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CurrencyPipe } from '@angular/common';
+import {Component, Inject} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {CurrencyPipe} from '@angular/common';
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-fetch-data',
@@ -8,29 +9,99 @@ import { CurrencyPipe } from '@angular/common';
 })
 export class ResultComponent {
   constructor(
+    public http: HttpClient,
+    @Inject('BASE_URL')
+    public baseUrl: string,
     private router: Router,
     private route: ActivatedRoute,
-    private currencyPipe: CurrencyPipe) { }
+    private currencyPipe: CurrencyPipe) {
+  }
 
+  transactionID: string;
   responseCode: string;
-  billNumber: string;
+  orderNumber: string;
   orderAmount: string;
+  orderDateTime: string;
   orderCurrency: string;
-  pay_timestamp: string;
-  product;
 
-  param1: string;
-  param2: string;
+  resultResponseTime: string;
+  rawContent: string;
+  responseContent: string;
+
+  ipnResponseTime: string;
+  ipnRawContent: string;
+  ipnResponseContent: string;
+
+  public loading: boolean = false;
+  public isDisabledButton: boolean = false;
 
   ngOnInit() {
-    console.log('Called Constructor');
-    this.product = history.state;
-
-    this.billNumber = history.state.BillNumber;
-    this.orderAmount = history.state.OrderAmount;
-    this.pay_timestamp = history.state.PayTimestamp;
-
-    this.param1 = JSON.parse(history.state.ResponseData);
-    this.param2 = JSON.parse(history.state.DecryptData);
+    this.route.queryParams.subscribe(params => {
+      this.transactionID = decodeURIComponent(params['transactionID']);
+      if(this.transactionID || this.transactionID != "")
+      {
+        this.queryTransaction();
+      }
+    });
   }
+
+  public refresh() {
+    this.loading = true;
+    this.isDisabledButton = true;
+
+    this.queryTransaction();
+  }
+
+  queryTransaction() {
+    this.http
+      .post<ResponseData>(this.baseUrl + 'api/transaction', {transactionID: this.transactionID})
+      .subscribe(result => {
+
+        if (result.rawContent) {
+          this.rawContent = JSON.parse(result.rawContent);
+          this.responseContent = JSON.parse(result.responseContent);
+        }
+
+        this.resultResponseTime = result.resultResponseTime;
+        this.responseCode = result.responseContent;
+        this.orderNumber = result.orderNumber;
+        this.orderCurrency = result.orderCurrency;
+        this.orderDateTime = result.orderDateTime;
+
+        if (result.orderAmount) {
+          if (result.orderCurrency == "VND") {
+            this.orderAmount = this.currencyPipe.transform(result.orderAmount, 'VND', false).replace("VND", "") + " VND";
+          } else {
+            this.orderAmount = this.currencyPipe.transform(result.orderAmount, 'USD', false).replace("USD", "") + " USD";
+          }
+        }
+
+        if (result.ipnRawContent) {
+          this.ipnResponseTime = result.ipnResponseTime;
+          this.ipnRawContent = JSON.parse(result.ipnRawContent);
+          this.ipnResponseContent = JSON.parse(result.ipnResponseContent);
+        }
+
+        this.loading = false;
+        this.isDisabledButton = false;
+      }, error => {
+        this.loading = false;
+        this.isDisabledButton = false;
+        console.error(error);
+      });
+  }
+}
+
+interface ResponseData {
+  orderNumber: string;
+  orderAmount: string;
+  orderCurrency: string;
+  orderDateTime: string;
+  rawContent: string;
+  resultResponseTime: string;
+  responseContent: string;
+  responseCode: string;
+  ipnResponseTime: string;
+  ipnRawContent: string;
+  ipnResponseContent: string;
 }

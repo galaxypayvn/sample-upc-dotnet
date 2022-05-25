@@ -1,4 +1,4 @@
-﻿namespace Demo.Model
+﻿namespace UPC.Api.Model
 {
     public class CallbackData
     {

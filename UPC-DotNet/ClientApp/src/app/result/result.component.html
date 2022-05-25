@@ -82,11 +82,11 @@
   <ul class="c-list-inline">
     <li>
       <h3>Order Number</h3>
-      <p>{{billNumber}}</p>
+      <p>{{orderNumber}}</p>
     </li>
     <li>
       <h3>Date Purchased</h3>
-      <p>{{pay_timestamp}}</p>
+      <p>{{orderDateTime}}</p>
     </li>
     <li>
       <h3>Total Payable</h3>
@@ -94,7 +94,7 @@
     </li>
   </ul>
 </div>
-<br />
+<br/>
 
 <div class="c-content-title-1">
   <h3 class="mt-5 c-font-uppercase c-font-bold">
@@ -102,13 +102,68 @@
   </h3>
   <div class="c-line-center c-theme-bg"></div>
 </div>
-<div class="column">
-  <h3 class="mt-5 c-center">Response Data</h3>
-  <textarea name="param11" placeholder="param1" rows="10" value="{{param1 | json}}" className="form-control"></textarea>
+<div class="form-group">
+    <div class="twelve columns m-sm-3">
+      Your transaction is remain in cache 1 day until the cleaner remove it.
+    </div>
+    <div class="twelve columns">
+      <button class="btn btn-success" [disabled]="isDisabledButton" (click)="refresh()">
+        <i class="fa fa-spinner fa-spin" *ngIf="loading"></i> Refresh
+      </button>
+    </div>
 </div>
-<div class="column">
-  <h3 class="mt-5 c-center">Decoded Data</h3>
-  <textarea name="param2" placeholder="param2" rows="10" value="{{param2 | json}}" className="form-control"></textarea>
+
+<div class="form-group">
+  <div class="mt-5">
+    <h4 class="c-font-uppercase c-font-bold">
+      Result Callback
+    </h4>
+    <h3 class="c-center">
+      Received at {{resultResponseTime}}
+    </h3>
+  </div>
+  <div class="row">
+    <div class="column">
+      <h3 class="c-center">Response Data</h3>
+      <textarea name="param11" placeholder="Raw Content" rows="10" value="{{rawContent | json}}"
+                class="form-control"></textarea>
+    </div>
+    <div class="column">
+      <h3 class="c-center">Decoded Data</h3>
+      <textarea name="param2" placeholder="Response Content" rows="10" value="{{responseContent | json}}"
+                class="form-control"></textarea>
+    </div>
+  </div>
 </div>
+
+<div class="form-group mt-5 mb-5">
+  <div class="mt-5">
+    <h4 class="c-font-uppercase c-font-bold">
+      IPN Callback
+    </h4>
+    <h3 class="c-center">
+      Received at {{ipnResponseTime}}
+    </h3>
+  </div>
+  <div class="row">
+    <div class="column">
+      <h3 class="c-center">Response Data</h3>
+      <textarea name="param11"
+                placeholder="Raw Content"
+                rows="10"
+                value="{{ipnRawContent | json}}"
+                class="form-control"></textarea>
+    </div>
+    <div class="column">
+      <h3 class="c-center">Decoded Data</h3>
+      <textarea name="param2"
+                placeholder="Response Content"
+                rows="10"
+                value="{{ipnResponseContent | json}}"
+                class="form-control"></textarea>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

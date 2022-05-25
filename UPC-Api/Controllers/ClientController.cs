@@ -1,25 +1,20 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Globalization;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Demo.Model;
-using Demo.Service;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-using UPCDotNet.Model;
+using UPC.Api.Model;
+using UPC.Api.Service;
 
-namespace Demo.Controllers
+namespace UPC.Api.Controllers
 {
     [ApiController]
     [Route("api")]
@@ -27,6 +22,7 @@ namespace Demo.Controllers
     {
         private readonly ILogger<ClientController> _logger;
         private readonly IConfiguration _configuration;
+        private static Timer _logTimer;
 
         private JsonSerializerOptions JsonOptions { get; } = new()
         {
@@ -36,8 +32,31 @@ namespace Demo.Controllers
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
 
-        private static ConcurrentDictionary<string, TransactionData> _Transactions = new();
+        private static readonly ConcurrentDictionary<string, TransactionData> Transactions = new();
 
+        static ClientController()
+        {
+            const int interval = 1000 * 60 * 60 * 1;  // 1 hours
+            _logTimer = new Timer(ProcessOnSchedule, null, interval, interval);
+        }
+        
+        // Remove expired transactions from Cache
+        private static void ProcessOnSchedule(object? state)
+        {
+            long currentDateTime = long.Parse(DateTime.Now.ToString("yyyyMMddHHmmss"));
+            
+            List<TransactionData> expiredTransactions =
+            Transactions.Values
+                .Where(item => item.DateTimeExpire < currentDateTime)
+                .ToList();
+
+            foreach (TransactionData transaction in expiredTransactions)
+            {
+                Transactions.TryRemove(transaction.TransactionID, out _);
+            }
+        }
+        
+        
         public ClientController(ILogger<ClientController> logger, IConfiguration configuration)
         {
             _logger = logger;
@@ -48,12 +67,12 @@ namespace Demo.Controllers
         [Route("transaction")]
         public TransactionData Get([FromBody] TransactionData transaction)
         {
-            if (string.IsNullOrWhiteSpace(transaction?.TransactionID))
+            if (string.IsNullOrWhiteSpace(transaction.TransactionID))
             {
                 return new TransactionData();
             }
 
-            if (_Transactions.TryRemove(transaction.TransactionID, out transaction) == false)
+            if (Transactions.TryGetValue(transaction.TransactionID, out transaction!) == false)
             {
                 transaction = new TransactionData();
             }
@@ -61,9 +80,44 @@ namespace Demo.Controllers
             return transaction;
         }
 
-        private static void SaveCache(TransactionData transaction)
+        private static void AddCache(TransactionData transaction)
         {
-            _Transactions.TryAdd(transaction.TransactionID, transaction);
+            transaction.DateTimeExpire = long.Parse(DateTime.Now.AddDays(1).ToString("yyyyMMddHHmmss"));
+            Transactions.TryAdd(transaction.TransactionID, transaction);
+        }
+        
+        private static void UpdateResultToCache(TransactionData transaction)
+        {
+            if (Transactions.TryGetValue(transaction.TransactionID, out TransactionData? source) == false)
+            {
+                AddCache(transaction);
+            }
+            else
+            {
+                source.ResultResponseTime = transaction.ResultResponseTime;
+                source.RawContent = transaction.RawContent;
+                source.ResponseContent = transaction.ResponseContent;
+
+                source.ResponseCode = transaction.ResponseCode;
+                source.OrderNumber = transaction.OrderNumber;
+                source.OrderAmount = transaction.OrderAmount;
+                source.OrderCurrency = transaction.OrderCurrency;
+                source.OrderDateTime = transaction.OrderDateTime;
+            }
+        }
+
+        private static void UpdateIpnToCache(TransactionData transaction)
+        {
+            if (Transactions.TryGetValue(transaction.TransactionID, out TransactionData? source) == false)
+            {
+                AddCache(transaction);
+            }
+            else
+            {
+                source.IPNResponseTime = transaction.IPNResponseTime;
+                source.IPNRawContent = transaction.IPNRawContent;
+                source.IPNResponseContent = transaction.IPNResponseContent;
+            }
         }
         
         
@@ -72,7 +126,7 @@ namespace Demo.Controllers
         public ServiceResponseData<ResponseData> Submit(RequestData requestData)
         {
             // Validate ExtraData
-            JsonDocument extraData;
+            JsonDocument? extraData;
             try
             {
                 extraData = JsonSerializer.Deserialize<JsonDocument>(requestData.ExtraData);
@@ -99,7 +153,7 @@ namespace Demo.Controllers
                 order.OrderAmount = decimal.Parse(requestData.OrderAmount);
                 order.OrderCurrency = requestData.OrderCurrency;
                 order.OrderDescription = requestData.OrderDescription;
-                order.ExtraData = extraData;
+                order.ExtraData = extraData!;
                 order.CardType = requestData.CardType;
                 order.Bank = requestData.Bank;
                 order.Language = requestData.Language;
@@ -119,10 +173,10 @@ namespace Demo.Controllers
 
                 // Response
                 _logger.LogInformation("Response: " + response);
-                ServiceResponseData<ResponseData> resultData =
+                ServiceResponseData<ResponseData>? resultData =
                     JsonSerializer.Deserialize<ServiceResponseData<ResponseData>>(response, JsonOptions);
 
-                return resultData;
+                return resultData!;
             }
             catch (Exception e)
             {
@@ -166,7 +220,7 @@ namespace Demo.Controllers
             string response = FromBase64String(model.Data);
             _logger.LogInformation("Cancel URL Callback: " + response);
 
-            ServiceResponseData<OrderResponseData> serviceResponse =
+            ServiceResponseData<OrderResponseData>? serviceResponse =
                 JsonSerializer.Deserialize<ServiceResponseData<OrderResponseData>>(response, JsonOptions);
             
             OrderResponseData order = serviceResponse?.ResponseData ??  new OrderResponseData();
@@ -180,7 +234,7 @@ namespace Demo.Controllers
             transaction.TransactionID = order.TransactionID;
             transaction.RawContent = content;
             transaction.ResponseContent = response;
-            SaveCache(transaction);
+            UpdateResultToCache(transaction);
             
             string url = $"{ClientUrl}/router?method=cancel&transactionID=" + order.TransactionID;
             return Redirect(url);
@@ -206,7 +260,7 @@ namespace Demo.Controllers
             string response = FromBase64String(model.Data);
             _logger.LogInformation("Result URL Callback: " + response);
 
-            ServiceResponseData<OrderResponseData> serviceResponse =
+            ServiceResponseData<OrderResponseData>? serviceResponse =
                 JsonSerializer.Deserialize<ServiceResponseData<OrderResponseData>>(response, JsonOptions);
             
             OrderResponseData order = serviceResponse?.ResponseData ??  new OrderResponseData();
@@ -218,13 +272,15 @@ namespace Demo.Controllers
             string content = JsonSerializer.Serialize(model);
             TransactionData transaction = new();
             transaction.TransactionID = order.TransactionID;
+            transaction.ResultResponseTime = GetDateString(serviceResponse?.ResponseDateTime);
+            transaction.ResponseCode = serviceResponse?.ResponseCode;
             transaction.RawContent = content;
             transaction.ResponseContent = response;
             transaction.OrderNumber = order.OrderNumber;
             transaction.OrderAmount = order.OrderAmount.ToString(CultureInfo.InvariantCulture);
             transaction.OrderCurrency = order.OrderCurrency;
             transaction.OrderDateTime = FormatDate(order.OrderDateTime);
-            SaveCache(transaction);
+            UpdateResultToCache(transaction);
             
             string url = $"{ClientUrl}/router?method=success&transactionID=" + order.TransactionID;
             return Redirect(url);
@@ -236,8 +292,49 @@ namespace Demo.Controllers
         {
             string response = FromBase64String(model.Data);
             _logger.LogInformation("IPN URL PostBack: " + response);
+            
+            ServiceResponseData<OrderResponseData>? serviceResponse =
+                JsonSerializer.Deserialize<ServiceResponseData<OrderResponseData>>(response, JsonOptions);
+            
+            OrderResponseData order = serviceResponse?.ResponseData ??  new OrderResponseData();
+            if (string.IsNullOrWhiteSpace(order.TransactionID))
+            {
+                order.TransactionID = Guid.NewGuid().ToString();
+            }
+            
+            string content = JsonSerializer.Serialize(model);
+            TransactionData transaction = new();
+            transaction.TransactionID = order.TransactionID;
+            transaction.IPNResponseTime = GetDateString(serviceResponse?.ResponseDateTime);
+            transaction.ResponseCode = serviceResponse?.ResponseCode;
+            transaction.IPNRawContent = content;
+            transaction.IPNResponseContent = response;
+            
+            UpdateIpnToCache(transaction);
         }
 
+        private static string GetDateString(string? value)
+        {
+            DateTime responseDate = DateTime.Now;
+            
+            if (string.IsNullOrWhiteSpace(value) == false)
+            {
+                bool result = DateTime.TryParseExact(
+                    value, 
+                    "yyyyMMddHHmmss", 
+                    CultureInfo.InvariantCulture, 
+                    DateTimeStyles.None,
+                    out responseDate);
+
+                if (result == false)
+                {
+                    responseDate = DateTime.Now;
+                }
+            }
+            
+            return responseDate.ToString("dd/MM/yyyy HH:mm:ss");
+        }
+        
         private static string FormatDate(string value)
         {
             if (string.IsNullOrWhiteSpace(value))

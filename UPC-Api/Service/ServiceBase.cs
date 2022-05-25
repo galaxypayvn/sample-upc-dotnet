@@ -1,9 +1,8 @@
-﻿using System.IO;
-using System.Net;
+﻿using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Demo.Service;
+namespace UPC.Api.Service;
 
 public static class ServiceBase
 {
@@ -34,7 +33,7 @@ public static class ServiceBase
         return response;
     }
 
-    private static string GetResponse(HttpWebRequest request)
+    private static string GetResponse(WebRequest request)
     {
         string content;
         try
@@ -51,16 +50,16 @@ public static class ServiceBase
                 throw;
             }
 
-            using HttpWebResponse response = (HttpWebResponse)exception.Response;
+            using HttpWebResponse? response = (HttpWebResponse) exception.Response!;
             content = GetContent(response);
 
             return content;
         }
     }
 
-    private static string GetContent(WebResponse response)
+    private static string GetContent(WebResponse? response)
     {
-        using Stream stream = response?.GetResponseStream();
+        using Stream? stream = response?.GetResponseStream();
         if (stream == null)
         {
             return string.Empty;
@@ -73,8 +72,8 @@ public static class ServiceBase
 
     private static bool RemoveCertificateValidate(
         object sender,
-        X509Certificate cert,
-        X509Chain chain,
+        X509Certificate? cert,
+        X509Chain? chain,
         SslPolicyErrors error)
     {
         return true;

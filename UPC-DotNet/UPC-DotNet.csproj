@@ -10,10 +10,14 @@
 
         <!-- Set this to true if you enable server-side prerendering -->
         <BuildServerSideRenderer>false</BuildServerSideRenderer>
+        <RootNamespace>UPC.DotNet</RootNamespace>
+        <Authors>Lunar</Authors>
+        <AssemblyName>UPC.DotNet</AssemblyName>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(RunConfiguration)' == 'UPC' " />
     <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.4" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 
@@ -42,6 +46,23 @@
         <Folder Include="ClientApp\src\assets\image\" />
         <Folder Include="ClientApp\src\assets\i18n\" />
     </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Pages\Error.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\_ViewImports.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\UPC-Api\UPC-Api.csproj">
+          <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </ProjectReference>
+    </ItemGroup>
+
+<!--    <ItemGroup>-->
+<!--      <ProjectReference Include="..\UPC-Api\UPC-Api.csproj">-->
+<!--          <ExcludeFromSingleFile>true</ExcludeFromSingleFile>-->
+<!--      </ProjectReference>-->
+<!--    </ItemGroup>-->
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
         <!-- Ensure Node.js is installed -->

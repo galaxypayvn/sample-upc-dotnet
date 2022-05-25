@@ -1,5 +1,4 @@
-﻿using System;
-namespace UPCDotNet.Model
+﻿namespace UPC.Api.Model
 {
     public class ServiceResponseData<TModel> where TModel : class
     {

@@ -1,7 +1,10 @@
-﻿using System.Text.Encodings.Web;
+﻿using System;
+using System.Reflection;
 using System.Text.Json;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +14,7 @@ using Serilog;
 using Serilog.Debugging;
 using Serilog.Exceptions;
 
-namespace Demo;
+namespace UPC.DotNet;
 
 public class Startup
 {
@@ -37,7 +40,12 @@ public class Startup
             configuration.RootPath = "ClientApp/dist";
         });
 
-        SelfLog.Enable(Serilog.Log.Error);
+        // string assemblyPath = AppContext.BaseDirectory + "UPC-Api.dll";
+        // Assembly assembly = Assembly.LoadFile(assemblyPath);
+        // AssemblyPart part = new(assembly);
+        // services.AddControllers().PartManager.ApplicationParts.Add(part);
+
+        SelfLog.Enable(Log.Error);
         LoggerConfiguration loggerConfiguration = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .Enrich.WithMachineName()
