@@ -15,5 +15,12 @@
         public string CardType { get; set; }
         public string Bank { get; set; }
         public string ExtraData { get; set; }
+        
+        public bool IsHostedMerchant { get; set; }
+        public string? CardNumber { get; set; } = default!;
+        public string? CardHolderName { get; set; } = default!;
+        public string? CardIssueDate { get; set; } = default!;
+        public string? CardExpireDate { get; set; } = default!;
+        public string? CardVerificationValue { get; set; } = default!;
     }
 }

@@ -1,5 +1,5 @@
 ﻿<h1 style="color: #fab82d">Checkout Page Demo</h1>
-<div>This is a simple example of an Angular/C# component. (<a href="https://gitlab.com/gpay-sample/upc/upc-dotnet">Source here!</a>) - v3.0.20220525.1603</div>
+<div>This is a simple example of an Angular/C# component. (<a href="https://gitlab.com/gpay-sample/upc/upc-dotnet">Source here!</a>) - v3.1.20220607.1803</div>
 
 <div class="container pading-top-10">
   <div class="row">
@@ -11,7 +11,7 @@
             <div class="row">
               <div class="col-100 pading-left-15">
                 <label>Order Number</label>
-                <input class="form-control" type="text" id="billNumber" name="billNumber" value="{{billNumber}}" placeholder="Bill Number" className="form-control" />
+                <input class="form-control" type="text" id="billNumber" name="billNumber" value="{{billNumber}}" placeholder="Bill Number"/>
               </div>
             </div>
 
@@ -49,11 +49,11 @@
 
             <div class="row">
               <div class="col-50 pading-left-15">
-                <label for="currency-field">Amount</label>
+                <label for="currency-field">Amount <span style="color:red;">*</span></label>
                 <input class="form-control" type="text" id="orderAmount" value="{{amount}}" (change)="transformAmount($event)" />
               </div>
               <div class="col-50 pading-left-15">
-                <label>Currency</label>
+                <label>Currency <span style="color:red;">*</span></label>
                 <select class="form-control" id="orderCurrency" name="orderCurrency" value="{{currency}}" (change)="transformAmount($event)">
                   <option value="USD">USD</option>
                   <option value="VND" defaultValue="VND">VND</option>
@@ -65,13 +65,25 @@
           <div class="row">
             <div class="col-50 pading-left-15">
               <label>Description</label>
-              <input class="form-control" id="orderDescription" name="orderDescription" placeholder="Description" rows="2" value="{{description}}" className="form-control" />
+              <input class="form-control" id="orderDescription" name="orderDescription" placeholder="Description" rows="2" value="{{description}}"/>
             </div>
             <div class="col-50 pading-left-15">
-              <label>Language</label>
+              <label>Language <span style="color:red;">*</span></label>
               <select class="form-control" id="language" name="language" value={{lang}}>
                 <option value="vi" defaultValue="vi">Tiếng Việt</option>
                 <option value="en">English</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-100 pading-left-15">
+              <label>Merchant Hosted</label>
+              <select id='hosted' class="form-control" name='people' [(ngModel)]="hostSelect"
+                      (change)="filterHosted($event.target.value)">
+                <option *ngFor="let item of hosts" [value]="item.value">
+                  {{item.text}}
+                </option>
               </select>
             </div>
           </div>
@@ -84,7 +96,7 @@
         <h3 style="color: #5d63a8">Payment Information</h3>
         <div class="row">
           <div class="col-100 pading-left-15">
-            <label>Service Provider</label>
+            <label>Service Provider <span style="color:red;">*</span></label>
             <select class="form-control" name="cardType" id="cardType" [(ngModel)]="cardTypeSelect" value="{{cardtype}}" (change)="filterCardType($event.target.value)">
               <option *ngFor="let item of cardType" [value]="item.value">
                 {{item.text}}
@@ -94,12 +106,37 @@
         </div>
         <div class="row">
           <div class="col-100 pading-left-15">
-            <label>Bank/Card Scheme/Wallet</label>
-            <select id='bank' class="form-control" name='people' [(ngModel)]="bankSelect">
+            <label>Bank/Card Scheme/Wallet <span style="color:red;">*</span></label>
+            <select id='bank' class="form-control" name='people' [(ngModel)]="bankSelect"
+                    (change)="selectBank($event.target.value)">>
               <option *ngFor="let item of data" [value]="item.value">
                 {{item.text}}
               </option>
             </select>
+          </div>
+        </div>
+
+        <div [hidden]="isDisableHosted">
+          <div class="row">
+            <div class="col-50 pading-left-15">
+              <label>Card Number <span style="color:red;">*</span></label>
+              <input class="form-control" type="text" id="cardNumber" value="{{cardNumber}}"/>
+            </div>
+            <div class="col-50 pading-left-15">
+              <label>Card Holder Name <span style="color:red;">*</span></label>
+              <input class="form-control" type="text" id="cardHolderName" value="{{cardHolderName}}"/>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-50 pading-left-15">
+              <label>{{labelCardDate}} <span style="color:red;">*</span></label>
+              <input class="form-control" type="text" id="cardIssueDate" value="{{cardIssueDate}}"/>
+            </div>
+            <div class="col-50 pading-left-15" [hidden]="isCVV">
+              <label>CVV <span style="color:red;">*</span></label>
+              <input class="form-control" type="text" id="cardVerificationValue" value="{{cardVerificationValue}}"/>
+            </div>
           </div>
         </div>
         <!--<div class="row">

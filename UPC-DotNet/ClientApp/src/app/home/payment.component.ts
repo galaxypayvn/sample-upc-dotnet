@@ -23,6 +23,13 @@ export class PaymentComponent {
   public bank = "970437";
   public otp = "on";
   public json = "";
+  public cardNumber = "9704000000000018";
+  public cardHolderName = "Nguyen Van A";
+  public cardExpireDate = "01/39";
+  public cardIssueDate = "03/07";
+  public cardVerificationValue = "100";
+  public labelCardDate = "Card Issue Date";
+  public IsHostedMerchant = "NO";
   public extraData = {
     customer: {
       firstName: "Jacob",
@@ -126,9 +133,8 @@ export class PaymentComponent {
   };
 
   public resultData: ResponseData;
-
-
-
+  public isDisableHosted = true;
+  public isCVV = true;
   public loading: boolean = false;
   public isDisabledButton: boolean = false;
 
@@ -174,6 +180,19 @@ export class PaymentComponent {
     },
   ];
 
+  // Merchant hosted
+  public hosts = [
+    {
+      value: "YES",
+      text: "YES",
+    },
+    {
+      value: "NO",
+      text: "NO",
+    }
+  ];
+
+  hostSelect = "NO";
   bankSelect = "970403";
   cardTypeSelect = "atm";
   public data = this.atmOption;
@@ -208,19 +227,70 @@ export class PaymentComponent {
   }
 
   filterCardType(filterVal: any) {
+    const hosted = (<HTMLInputElement>document.getElementById("hosted")).value;
+    this.isDisableHosted = (filterVal === "Wallet" || hosted === "NO");
+
     switch (filterVal) {
       case "international":
         this.data = this.internationalOption;
         this.bankSelect = "VISA";
+        this.isCVV = !(this.isDisableHosted === false);
         break;
       case "atm":
         this.data = this.atmOption;
         this.bankSelect = "970403";
+        this.isCVV = true;
         break;
       case "Wallet":
         this.data = this.momoOption;
         this.bankSelect = "momo";
         break;
+    }
+
+    this.setValueCardInfo(this.bankSelect);
+  }
+
+  filterHosted(filterVal: any) {
+    switch (filterVal) {
+      case "YES":
+        const cardType = (<HTMLInputElement>document.getElementById("cardType")).value;
+        this.isDisableHosted = cardType === "Wallet";
+        this.isCVV = !(this.isDisableHosted == false && cardType === "international");
+        break;
+      case "NO":
+        this.isDisableHosted = true;
+        break;
+    }
+
+    this.setValueCardInfo();
+  }
+
+  selectBank(filterVal: any){
+    this.setValueCardInfo();
+  }
+
+  setValueCardInfo(bankSelect = null){
+    if(this.isCVV === false){
+      const bank = bankSelect || (<HTMLSelectElement>document.getElementById("bank")).value;
+
+      if(bank === "VISA"){
+        this.labelCardDate = "Card Expire Date";
+        this.cardNumber = "4508750015741019";
+        this.cardHolderName = "Nguyen Van A"
+        this.cardIssueDate = "01/39";
+      }
+      else{
+        this.labelCardDate = "Card Expire Date";
+        this.cardNumber = "5123450000000008";
+        this.cardHolderName = "Nguyen Van A"
+        this.cardIssueDate = "01/39";
+      }
+    }
+    else{
+      this.labelCardDate = "Card Issue Date";
+      this.cardNumber = "9704000000000018";
+      this.cardHolderName = "Nguyen Van A"
+      this.cardIssueDate = "03/07";
     }
   }
 
@@ -243,7 +313,13 @@ export class PaymentComponent {
     //this.request = (<HTMLSelectElement>document.getElementById("request")).value;
     this.json = (<HTMLSelectElement>document.getElementById("extraData")).value;
 
-    var data = {
+    this.cardNumber = (<HTMLSelectElement>document.getElementById("cardNumber")).value;
+    this.cardHolderName = (<HTMLSelectElement>document.getElementById("cardHolderName")).value;
+    this.cardIssueDate = (<HTMLSelectElement>document.getElementById("cardIssueDate")).value;
+    this.cardVerificationValue = (<HTMLSelectElement>document.getElementById("cardVerificationValue")).value;
+    this.IsHostedMerchant = (<HTMLSelectElement>document.getElementById("hosted")).value;
+
+  var data = {
       billNumber: this.billNumber,
       //firstName: this.firstName,
       //lastName: this.lastName,
@@ -258,7 +334,13 @@ export class PaymentComponent {
       bank: this.bank,
       otp: this.otp,
       request: "purchase",
-      extraData: this.json
+      extraData: this.json,
+      cardNumber: this.cardNumber,
+      cardHolderName: this.cardHolderName,
+      cardIssueDate: this.cardIssueDate,
+      cardExpireDate: this.cardIssueDate,
+      cardVerificationValue: this.cardVerificationValue,
+      isHostedMerchant: this.IsHostedMerchant === "YES"
     };
 
     this.http.post<ResponseData>(this.baseUrl + 'api/client', data)

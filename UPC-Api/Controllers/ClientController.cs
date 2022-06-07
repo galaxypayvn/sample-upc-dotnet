@@ -158,6 +158,15 @@ namespace UPC.Api.Controllers
                 order.Bank = requestData.Bank;
                 order.Language = requestData.Language;
 
+                if (requestData.IsHostedMerchant)
+                {
+                    order.CardNumber = requestData.CardNumber;
+                    order.CardHolderName = requestData.CardHolderName;
+                    order.CardIssueDate = requestData.CardIssueDate;
+                    order.CardExpireDate = requestData.CardExpireDate;
+                    order.CardVerificationValue = requestData.CardVerificationValue;
+                }
+
                 ServiceRequestData<OrderData> request = new();
                 request.RequestID = Guid.NewGuid().ToString("N");
                 request.RequestDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
