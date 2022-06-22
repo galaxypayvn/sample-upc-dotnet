@@ -151,7 +151,7 @@ export class PaymentComponent {
 
   public atmOption = [
     {
-      value: "970403",
+      value: "970400",
       text: "NAPAS (VIETNAM LOCAL BANKS)",
     }
   ];
@@ -193,15 +193,15 @@ export class PaymentComponent {
   ];
 
   hostSelect = "NO";
-  bankSelect = "970403";
+  bankSelect = "970400";
   cardTypeSelect = "atm";
   public data = this.atmOption;
 
   constructor(public http: HttpClient,
-    @Inject('BASE_URL')
-    public baseUrl: string,
-    private route: Router,
-    private currencyPipe: CurrencyPipe
+              @Inject('BASE_URL')
+              public baseUrl: string,
+              private route: Router,
+              private currencyPipe: CurrencyPipe
   ) { }
 
   transformAmount(element) {
@@ -238,7 +238,7 @@ export class PaymentComponent {
         break;
       case "atm":
         this.data = this.atmOption;
-        this.bankSelect = "970403";
+        this.bankSelect = "970400";
         this.isCVV = true;
         break;
       case "Wallet":
@@ -319,7 +319,7 @@ export class PaymentComponent {
     this.cardVerificationValue = (<HTMLSelectElement>document.getElementById("cardVerificationValue")).value;
     this.IsHostedMerchant = (<HTMLSelectElement>document.getElementById("hosted")).value;
 
-  var data = {
+    var data = {
       billNumber: this.billNumber,
       //firstName: this.firstName,
       //lastName: this.lastName,
@@ -375,5 +375,3 @@ interface OrderData {
   transactionId: string;
   endpoint: string;
 }
-
-
