@@ -1,7 +1,8 @@
-﻿import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { Component, Inject, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+﻿import {HttpClient} from '@angular/common/http';
+import {Router} from '@angular/router';
+import {Component, Inject, ElementRef, ViewChild} from '@angular/core';
+import {CommonModule, CurrencyPipe} from '@angular/common';
+import {ConsoleLogger} from "@angular/compiler-cli/ngcc";
 
 @Component({
   selector: 'app-payment-component',
@@ -159,7 +160,7 @@ export class PaymentComponent {
   // Bank Momo
   public momoOption = [
     {
-      value: "momo",
+      value: "MOMO",
       text: "MOMO WALLET",
     }
   ]
@@ -202,7 +203,8 @@ export class PaymentComponent {
               public baseUrl: string,
               private route: Router,
               private currencyPipe: CurrencyPipe
-  ) { }
+  ) {
+  }
 
   transformAmount(element) {
     this.amount = (<HTMLInputElement>document.getElementById("orderAmount")).value;
@@ -243,7 +245,7 @@ export class PaymentComponent {
         break;
       case "Wallet":
         this.data = this.momoOption;
-        this.bankSelect = "momo";
+        this.bankSelect = "MOMO";
         break;
     }
 
@@ -265,28 +267,26 @@ export class PaymentComponent {
     this.setValueCardInfo();
   }
 
-  selectBank(filterVal: any){
+  selectBank(filterVal: any) {
     this.setValueCardInfo();
   }
 
-  setValueCardInfo(bankSelect = null){
-    if(this.isCVV === false){
+  setValueCardInfo(bankSelect = null) {
+    if (this.isCVV === false) {
       const bank = bankSelect || (<HTMLSelectElement>document.getElementById("bank")).value;
 
-      if(bank === "VISA"){
+      if (bank === "VISA") {
         this.labelCardDate = "Card Expire Date";
         this.cardNumber = "4508750015741019";
         this.cardHolderName = "Nguyen Van A"
         this.cardIssueDate = "01/39";
-      }
-      else{
+      } else {
         this.labelCardDate = "Card Expire Date";
         this.cardNumber = "5123450000000008";
         this.cardHolderName = "Nguyen Van A"
         this.cardIssueDate = "01/39";
       }
-    }
-    else{
+    } else {
       this.labelCardDate = "Card Issue Date";
       this.cardNumber = "9704000000000018";
       this.cardHolderName = "Nguyen Van A"
@@ -344,20 +344,33 @@ export class PaymentComponent {
     };
 
     this.http.post<ResponseData>(this.baseUrl + 'api/client', data)
-      .subscribe(result => {
-        this.resultData = result;
+      .subscribe(
+        result => {
+          this.resultData = result;
 
-        if (result.responseCode != "200") {
-          alert(result.responseMessage);
-        }
-        // success
-        else if (result.responseCode == "200" && result.responseData.endpoint != null) {
-          window.location.href = result.responseData.endpoint;
-        }
+          if (result.responseCode != "200") {
+            alert(result.responseMessage);
+          }
+          // success
+          else if (result.responseCode == "200" && result.responseData.endpoint != null) {
+            window.location.href = result.responseData.endpoint;
+          }
 
-        this.loading = false;
-        this.isDisabledButton = false;
-      }, error => console.error(error));
+          this.loading = false;
+          this.isDisabledButton = false;
+        },
+        result => {
+          console.error(result);
+          this.loading = false;
+          this.isDisabledButton = false;
+
+          const messages = [];
+          for (const property in result.error.errors) {
+            messages.push(result.error.errors[property])
+          }
+
+          alert(result.statusText + ": " + messages);
+        });
   }
 
   public inCancel() {

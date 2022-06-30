@@ -1,3 +1,4 @@
+#pragma warning disable CS8618
 namespace UPC.Api.Model;
 
 public class TransactionData

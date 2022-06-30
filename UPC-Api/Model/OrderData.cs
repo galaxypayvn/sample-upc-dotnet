@@ -1,4 +1,5 @@
-﻿namespace UPC.Api.Model
+﻿#pragma warning disable CS8618
+namespace UPC.Api.Model
 {
 	public class OrderData
 	{

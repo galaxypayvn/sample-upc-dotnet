@@ -140,6 +140,19 @@ namespace UPC.Api.Controllers
                     ResponseMessage = "Extra data is not json",
                 };
             }
+
+            if (decimal.TryParse(
+                    requestData.OrderAmount, 
+                    NumberStyles.Any, 
+                    CultureInfo.InvariantCulture,
+                    out decimal orderAmount) == false)
+            {
+                return new ServiceResponseData<ResponseData>()
+                {
+                    ResponseCode = "400",
+                    ResponseMessage = "Order Amount is invalid.",
+                };
+            }
             
             try
             {
@@ -150,7 +163,7 @@ namespace UPC.Api.Controllers
                 order.OrderID = Guid.NewGuid().ToString();
                 order.OrderNumber = requestData.BillNumber;
                 order.OrderDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
-                order.OrderAmount = decimal.Parse(requestData.OrderAmount);
+                order.OrderAmount = orderAmount;
                 order.OrderCurrency = requestData.OrderCurrency;
                 order.OrderDescription = requestData.OrderDescription;
                 order.ExtraData = extraData!;
@@ -158,7 +171,8 @@ namespace UPC.Api.Controllers
                 order.Bank = requestData.Bank;
                 order.Language = requestData.Language;
 
-                if (requestData.IsHostedMerchant)
+                if (requestData.IsHostedMerchant &&
+                    requestData.CardType.ToUpper() != "WALLET")
                 {
                     order.CardNumber = requestData.CardNumber;
                     order.CardHolderName = requestData.CardHolderName;
@@ -193,7 +207,7 @@ namespace UPC.Api.Controllers
                 return new ServiceResponseData<ResponseData>
                 {
                     ResponseCode = "500",
-                    ResponseMessage = "Error!!!",
+                    ResponseMessage = "Sorry, The Server is busy. Please try again later.",
                 };
             }
         }
@@ -361,13 +375,17 @@ namespace UPC.Api.Controllers
                 : string.Empty;
         }
 
-        private static string Hash(
-            string plainText,
-            string salt = "")
+        public static string Hash(
+            string plainText, 
+            string? salt = "", 
+            HashAlgorithm? algorithm = null,
+            Encoding? encoding = null)
         {
-            using HashAlgorithm provider = new SHA256CryptoServiceProvider();
-            byte[] bytes = Encoding.UTF8.GetBytes(plainText + salt);
-            bytes = provider.ComputeHash(bytes);
+            algorithm ??= SHA256.Create();
+            encoding ??= Encoding.UTF8;
+
+            byte[] bytes = encoding.GetBytes(plainText + salt);
+            bytes = algorithm.ComputeHash(bytes);
             return bytes.Aggregate(string.Empty, (current, x) => current + $"{x:x2}");
         }
         

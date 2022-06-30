@@ -6,6 +6,7 @@ namespace UPC.Api.Service;
 
 public static class ServiceBase
 {
+    [Obsolete("Obsolete")]
     public static string Post(string url, string content, string apiKey, string signature)
     {
         RemoveServerCertificate();
@@ -50,7 +51,7 @@ public static class ServiceBase
                 throw;
             }
 
-            using HttpWebResponse? response = (HttpWebResponse) exception.Response!;
+            using HttpWebResponse response = (HttpWebResponse) exception.Response!;
             content = GetContent(response);
 
             return content;
