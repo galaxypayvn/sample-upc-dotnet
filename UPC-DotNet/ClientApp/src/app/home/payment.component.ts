@@ -9,6 +9,31 @@ import {ConsoleLogger} from "@angular/compiler-cli/ngcc";
   templateUrl: './payment.component.html'
 })
 export class PaymentComponent {
+
+  // Default Providers
+  readonly paymentGroups = {
+    hub: {
+      text: "PAYMENT HUBS",
+      value: "HUB"
+    }
+  };
+
+  readonly paymentProviders = {
+    hub2c2p: {
+      text: "HUB 2C2P",
+      value: "2C2P"
+    },
+    bankDefault: {
+      text: "VIETNAM LOCAL BANKS",
+      value: ""
+    },
+    bank970400: {
+      text: "SAIGON BANK/NGÂN HÀNG TMCP SÀI GÒN CÔNG THƯƠNG",
+      value: "970400"
+    }
+  };
+
+  //
   public currentCount = 0;
   public billNumber = Math.floor((Math.random() * 100000)).toString();
   public firstName = "Galaxy";
@@ -151,10 +176,8 @@ export class PaymentComponent {
   ];
 
   public atmOption = [
-    {
-      value: "970400",
-      text: "NAPAS (VIETNAM LOCAL BANKS)",
-    }
+    this.paymentProviders.bankDefault,
+    this.paymentProviders.bank970400
   ];
 
   // Bank Momo
@@ -165,20 +188,31 @@ export class PaymentComponent {
     }
   ]
 
+  public hupOption = [
+    {
+      value: this.paymentProviders.hub2c2p.value,
+      text: this.paymentProviders.hub2c2p.text,
+    }
+  ]
+
   // Service Provider
   public cardType = [
     {
-      value: "Wallet",
-      text: "WALLET",
+      value: "atm",
+      text: "ATM CARD",
     },
     {
       value: "international",
       text: "INTERNATIONAL CARD (VISA, MASTER CARD, JCB,...)",
     },
     {
-      value: "atm",
-      text: "ATM CARD",
+      value: "Wallet",
+      text: "WALLET",
     },
+    {
+      value: this.paymentGroups.hub.value,
+      text: this.paymentGroups.hub.text,
+    }
   ];
 
   // Merchant hosted
@@ -194,7 +228,7 @@ export class PaymentComponent {
   ];
 
   hostSelect = "NO";
-  bankSelect = "970400";
+  bankSelect = this.paymentProviders.bankDefault.value;
   cardTypeSelect = "atm";
   public data = this.atmOption;
 
@@ -240,12 +274,16 @@ export class PaymentComponent {
         break;
       case "atm":
         this.data = this.atmOption;
-        this.bankSelect = "970400";
+        this.bankSelect = this.paymentProviders.bankDefault.value;
         this.isCVV = true;
         break;
       case "Wallet":
         this.data = this.momoOption;
         this.bankSelect = "MOMO";
+        break;
+      case this.paymentGroups.hub.value:
+        this.data = this.hupOption;
+        this.bankSelect = this.paymentProviders.hub2c2p.value;
         break;
     }
 
