@@ -14,6 +14,8 @@ using Microsoft.Extensions.Logging;
 using UPC.Api.Model;
 using UPC.Api.Service;
 
+#pragma warning disable CS0618
+
 namespace UPC.Api.Controllers
 {
     [ApiController]

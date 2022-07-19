@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 
@@ -9,6 +10,7 @@ public static class ServiceBase
     [Obsolete("Obsolete")]
     public static string Post(string url, string content, string apiKey, string signature)
     {
+        RemoveTrace();
         RemoveServerCertificate();
 
         // Request
@@ -83,5 +85,10 @@ public static class ServiceBase
     private static void RemoveServerCertificate()
     {
         ServicePointManager.ServerCertificateValidationCallback += RemoveCertificateValidate;
+    }
+
+    private static void RemoveTrace()
+    {
+        Activity.Current = null;
     }
 }
