@@ -55,8 +55,9 @@
               <div class="col-50 pading-left-15">
                 <label>Currency <span style="color:red;">*</span></label>
                 <select class="form-control" id="orderCurrency" name="orderCurrency" value="{{currency}}" (change)="transformAmount($event)">
-                  <option value="USD">USD</option>
                   <option value="VND" defaultValue="VND">VND</option>
+                  <option value="USD">USD</option>
+                  <option value="THB">THB</option>
                 </select>
               </div>
             </div>
