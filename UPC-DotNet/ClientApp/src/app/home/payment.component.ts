@@ -61,82 +61,12 @@ export class PaymentComponent {
       firstName: "Jacob",
       lastName: "Savannah",
       identityNumber: "6313126925",
-      email: "Paisley@gmail.com",
+      email: "Jacob@gmail.com",
       phoneNumber: "0580821083",
-      phoneType: "CjcFqIPAtc",
+      phoneType: "Mobile",
       gender: "F",
       dateOfBirth: "19920117",
       title: "Mr"
-    },
-    device: {
-      browser: "uL3ydX2Pcv",
-      fingerprint: "ZdiijSPr0M",
-      hostName: "JBddmayji5",
-      ipAddress: "KU9CoAMTub",
-      deviceID: "woB325my3h",
-      deviceModel: "nPEDP9SyHc"
-    },
-    application: {
-      applicationID: "V2hLZeYRHs",
-      applicationChannel: "Mobile"
-    },
-    airline: {
-      recordLocator: "VDknTdszRc",
-      journeyType: 279182634,
-      departureAirport: "Dm5W8daux6",
-      departureDateTime: "26/04/202206:31:22",
-      arrivalAirport: "DTMKu99Ucx",
-      arrivalDateTime: "26/04/202215:18:30",
-      services: [{
-        serviceCode: "iOrEyae8km",
-        quantity: 687449710,
-        amount: 80000,
-        tax: 0,
-        fee: 10000,
-        totalAmount: 80000,
-        currency: "USD"
-      }, {
-        serviceCode: "YltyBWqm00",
-        quantity: 391314729,
-        amount: 60000,
-        tax: 0,
-        fee: 10000,
-        totalAmount: 100000,
-        currency: "USD"
-      }
-      ],
-      flights: [{
-        airlineCode: "qHRJ0vSJbk",
-        carrierCode: "lVPkqwaoDr",
-        flightNumber: 304498347,
-        travelClass: "OET2hayLmS",
-        departureAirport: "J5OF0jDZ0A",
-        departureDate: "BBg2Vv5RrS",
-        departureTime: "26/04/202213:48:33",
-        departureTax: "n2ILRrqiS8",
-        arrivalAirport: "u3laQZXoff",
-        arrivalDate: "VR0hUprpMp",
-        arrivalTime: "26/04/202203:33:43",
-        fees: 10000,
-        taxes: 0,
-        fares: 50000,
-        fareBasisCode: "DwzXajRwiv",
-        originCountry: "A4uyesF2er"
-      }
-      ],
-      passengers: [{
-        passengerID: "uew9dL5JAI",
-        passengerType: "SouBmUpryn",
-        firstName: "Muhammad",
-        lastName: "Kinsley",
-        title: "Mrs",
-        gender: "F",
-        dateOfBirth: "20220425",
-        identityNumber: "2KoxDO9XYv",
-        nameInPNR: "jGFPV12jcA",
-        memberTicket: "fwmplDrraT"
-      }
-      ]
     },
     billing: {
       countryCode: "vn",
@@ -227,6 +157,89 @@ export class PaymentComponent {
     }
   ];
 
+  // currencyOption ATM and MOMO
+  public currencyOptionDomestic = [
+    {
+      value: "VND",
+      text: "VND",
+    }
+  ]
+
+  // currencyOption MPGS
+  public currencyOptionMPGS = [
+    {
+      value: "VND",
+      text: "VND",
+    },
+    {
+      value: "USD",
+      text: "USD",
+    }
+  ]
+
+  // currencyOption 2C2P
+  public currencyOption2C2P = [
+    {
+      value: "VND",
+      text: "VND",
+    },
+    {
+      value: "USD",
+      text: "USD",
+    },
+    {
+      value: "THB",
+      text: "THB",
+    },
+    {
+      value: "JPY",
+      text: "JPY",
+    },
+    {
+      value: "INR",
+      text: "INR",
+    },
+    {
+      value: "TWD",
+      text: "TWD",
+    },
+    {
+      value: "MYR",
+      text: "MYR",
+    },
+    {
+      value: "SGD",
+      text: "SGD",
+    },
+    {
+      value: "KRW",
+      text: "KRW",
+    },
+    {
+      value: "KHR",
+      text: "KHR",
+    },
+    {
+      value: "MMK",
+      text: "MMK",
+    },
+    {
+      value: "IDR",
+      text: "IDR",
+    },
+    {
+      value: "HKD",
+      text: "HKD",
+    },
+    {
+      value: "CNY",
+      text: "CNY",
+    }
+  ]
+
+  // currencyOption
+  public currencyOption = this.currencyOptionDomestic;
+
   hostSelect = "NO";
   bankSelect = this.paymentProviders.bankDefault.value;
   cardTypeSelect = "atm";
@@ -247,18 +260,18 @@ export class PaymentComponent {
     var numb = this.amount.match(/\d/g);
     this.amount = numb.join("");
 
-    if (this.currency == "VND") {
-      this.amount = this.currencyPipe.transform(this.amount, "VND", false);
-      this.amount = this.amount.replace("VND", "");
-      //element.target.value = this.amount;
-
-      console.log("VND");
-    } else {
+    if (this.currency == "USD") {
       this.amount = this.currencyPipe.transform(this.amount, "USD", false);
       this.amount = this.amount.replace("USD", "");
       //element.target.value = this.amount;
 
       console.log("USD");
+    } else {
+      this.amount = this.currencyPipe.transform(this.amount, "VND", false);
+      this.amount = this.amount.replace("VND", "");
+      //element.target.value = this.amount;
+
+      console.log("VND");
     }
   }
 
@@ -271,19 +284,23 @@ export class PaymentComponent {
         this.data = this.internationalOption;
         this.bankSelect = "VISA";
         this.isCVV = !(this.isDisableHosted === false);
+        this.currencyOption = this.currencyOptionMPGS;
         break;
       case "atm":
         this.data = this.atmOption;
         this.bankSelect = this.paymentProviders.bankDefault.value;
         this.isCVV = true;
+        this.currencyOption = this.currencyOptionDomestic;
         break;
       case "Wallet":
         this.data = this.momoOption;
         this.bankSelect = "MOMO";
+        this.currencyOption = this.currencyOptionDomestic;
         break;
       case this.paymentGroups.hub.value:
         this.data = this.hupOption;
         this.bankSelect = this.paymentProviders.hub2c2p.value;
+        this.currencyOption = this.currencyOption2C2P;
         break;
     }
 

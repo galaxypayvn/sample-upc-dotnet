@@ -1,5 +1,5 @@
 ﻿<h1 style="color: #fab82d">Checkout Page Demo</h1>
-<div>This is a simple example of an Angular/C# component. (<a href="https://gitlab.com/gpay-sample/upc/upc-dotnet">Source here!</a>) - v3.2.20220711.1147</div>
+<div>This is a simple example of an Angular/C# component. (<a href="https://gitlab.com/gpay-sample/upc/upc-dotnet">Source here!</a>) - v3.2.20220816.1008</div>
 
 <div class="container pading-top-10">
   <div class="row">
@@ -55,9 +55,9 @@
               <div class="col-50 pading-left-15">
                 <label>Currency <span style="color:red;">*</span></label>
                 <select class="form-control" id="orderCurrency" name="orderCurrency" value="{{currency}}" (change)="transformAmount($event)">
-                  <option value="VND" defaultValue="VND">VND</option>
-                  <option value="USD">USD</option>
-                  <option value="THB">THB</option>
+                  <option *ngFor="let item of currencyOption" [value]="item.value">
+                    {{item.text}}
+                  </option>
                 </select>
               </div>
             </div>
