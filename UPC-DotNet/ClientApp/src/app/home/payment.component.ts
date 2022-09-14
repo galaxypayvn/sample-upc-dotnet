@@ -1,8 +1,8 @@
 ﻿import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
-import {Component, Inject, ElementRef, ViewChild} from '@angular/core';
-import {CommonModule, CurrencyPipe} from '@angular/common';
-import {ConsoleLogger} from "@angular/compiler-cli/ngcc";
+import {Component, Inject} from '@angular/core';
+import {CurrencyPipe} from '@angular/common';
+import {UPC} from './variables';
 
 @Component({
   selector: 'app-payment-component',
@@ -10,339 +10,170 @@ import {ConsoleLogger} from "@angular/compiler-cli/ngcc";
 })
 export class PaymentComponent {
 
-  // Default Providers
-  readonly paymentGroups = {
-    hub: {
-      text: "PAYMENT HUBS",
-      value: "HUB"
-    }
-  };
+  public UPC: UPC;
+  public defaultPaymentMethod: string;
+  public paymentMethod: string;
+  public paymentSource: string;
+  public paymentSourceOptions: any;
 
-  readonly paymentProviders = {
-    hub2c2p: {
-      text: "HUB 2C2P",
-      value: "2C2P"
-    },
-    bankDefault: {
-      text: "VIETNAM LOCAL BANKS",
-      value: ""
-    },
-    bank970400: {
-      text: "SAIGON BANK/NGÂN HÀNG TMCP SÀI GÒN CÔNG THƯƠNG",
-      value: "970400"
-    }
-  };
+  //configMerchant;
+  public merchant = (<HTMLSelectElement>document.getElementById("txtlistMerchant")).value;
+  public listAPIKey = JSON.parse(this.merchant);
 
-  //
-  public currentCount = 0;
-  public billNumber = Math.floor((Math.random() * 100000)).toString();
-  public firstName = "Galaxy";
-  public lastName = "Pay";
   public lang = "vi";
-  public city = "HCM";
-  public email = "demo@galaxypay.vn";
-  public amount = "10,000";
-  public currency = "VND";
-  public address = "41 Kim Long";
-  public description = "Secure Page Demo";
-  public cardtype = "atm";
-  public bank = "970437";
-  public otp = "on";
-  public json = "";
+  public orderNumber = Math.floor((Math.random() * 100000)).toString();
+  public orderAmount = "10,000";
+  public orderCurrency = "VND";
+  public orderDescription = "Secure Page Demo";
+  public extra: string;
+  public currencyOption: any;
   public cardNumber = "9704000000000018";
   public cardHolderName = "Nguyen Van A";
-  public cardExpireDate = "01/39";
   public cardIssueDate = "03/07";
   public cardVerificationValue = "100";
   public labelCardDate = "Card Issue Date";
-  public IsHostedMerchant = "NO";
-  public extraData = {
-    customer: {
-      firstName: "Jacob",
-      lastName: "Savannah",
-      identityNumber: "6313126925",
-      email: "Jacob@gmail.com",
-      phoneNumber: "0580821083",
-      phoneType: "Mobile",
-      gender: "F",
-      dateOfBirth: "19920117",
-      title: "Mr"
-    },
-    billing: {
-      countryCode: "vn",
-      stateProvine: "Hồ Chí Minh",
-      cityName: "Nhà Bè",
-      postalCode: "",
-      streetNumber: "673",
-      addressLine1: "Đường Nguyễn Hữu Thọ",
-      addressLine2: ""
-    },
-    shipping: {
-      countryCode: "vn",
-      stateProvine: "Hồ Chí Minh",
-      cityName: "Nhà Bè",
-      postalCode: "",
-      streetNumber: "673",
-      addressLine1: "Đường Nguyễn Hữu Thọ",
-      addressLine2: ""
-    }
-  };
+  public integrationMethod = "SIMPLE";
+  public APIKey = "";
+  public SuccessURL = "localhost:9000/api/success";
 
   public resultData: ResponseData;
+  public isPayWithOption = false;
   public isDisableHosted = true;
   public isCVV = true;
   public loading: boolean = false;
   public isDisabledButton: boolean = false;
 
-  public internationalOption = [
-    {
-      value: "VISA",
-      text: "VISA CARD",
-    },
-    {
-      value: "MASTER",
-      text: "MASTER CARD",
-    }
-  ];
-
-  public atmOption = [
-    this.paymentProviders.bankDefault,
-    this.paymentProviders.bank970400
-  ];
-
-  // Bank Momo
-  public momoOption = [
-    {
-      value: "MOMO",
-      text: "MOMO WALLET",
-    }
-  ]
-
-  public hupOption = [
-    {
-      value: this.paymentProviders.hub2c2p.value,
-      text: this.paymentProviders.hub2c2p.text,
-    }
-  ]
-
-  // Service Provider
-  public cardType = [
-    {
-      value: "atm",
-      text: "ATM CARD",
-    },
-    {
-      value: "international",
-      text: "INTERNATIONAL CARD (VISA, MASTER CARD, JCB,...)",
-    },
-    {
-      value: "Wallet",
-      text: "WALLET",
-    },
-    {
-      value: this.paymentGroups.hub.value,
-      text: this.paymentGroups.hub.text,
-    }
-  ];
-
-  // Merchant hosted
-  public hosts = [
-    {
-      value: "YES",
-      text: "YES",
-    },
-    {
-      value: "NO",
-      text: "NO",
-    }
-  ];
-
-  // currencyOption ATM and MOMO
-  public currencyOptionDomestic = [
-    {
-      value: "VND",
-      text: "VND",
-    }
-  ]
-
-  // currencyOption MPGS
-  public currencyOptionMPGS = [
-    {
-      value: "VND",
-      text: "VND",
-    },
-    {
-      value: "USD",
-      text: "USD",
-    }
-  ]
-
-  // currencyOption 2C2P
-  public currencyOption2C2P = [
-    {
-      value: "VND",
-      text: "VND",
-    },
-    {
-      value: "USD",
-      text: "USD",
-    },
-    {
-      value: "THB",
-      text: "THB",
-    },
-    {
-      value: "JPY",
-      text: "JPY",
-    },
-    {
-      value: "INR",
-      text: "INR",
-    },
-    {
-      value: "TWD",
-      text: "TWD",
-    },
-    {
-      value: "MYR",
-      text: "MYR",
-    },
-    {
-      value: "SGD",
-      text: "SGD",
-    },
-    {
-      value: "KRW",
-      text: "KRW",
-    },
-    {
-      value: "KHR",
-      text: "KHR",
-    },
-    {
-      value: "MMK",
-      text: "MMK",
-    },
-    {
-      value: "IDR",
-      text: "IDR",
-    },
-    {
-      value: "HKD",
-      text: "HKD",
-    },
-    {
-      value: "CNY",
-      text: "CNY",
-    }
-  ]
-
-  // currencyOption
-  public currencyOption = this.currencyOptionDomestic;
-
-  hostSelect = "NO";
-  bankSelect = this.paymentProviders.bankDefault.value;
-  cardTypeSelect = "atm";
-  public data = this.atmOption;
-
   constructor(public http: HttpClient,
               @Inject('BASE_URL')
               public baseUrl: string,
               private route: Router,
-              private currencyPipe: CurrencyPipe
-  ) {
+              private currencyPipe: CurrencyPipe)
+  {
+    this.UPC = new UPC();
+    this.defaultPaymentMethod = this.UPC.paymentMethods.ATM.value;
+
+    this.paymentMethod = this.defaultPaymentMethod;
+    this.paymentSourceOptions = this.UPC.paymentProviders[this.paymentMethod];
+    this.paymentSource = this.UPC.paymentProviders[this.paymentMethod][0].value;
+    this.extra = JSON.stringify(this.UPC.paymentExtra, null, 4);
+
+    this.currencyOption = this.UPC.currencyDomestic;
   }
 
-  transformAmount(element) {
-    this.amount = (<HTMLInputElement>document.getElementById("orderAmount")).value;
-    this.currency = (<HTMLInputElement>document.getElementById("orderCurrency")).value;
+  sortOptions = (a, b): number => { return a.value.order > b.value.order ? 1 : 0; }
 
-    var numb = this.amount.match(/\d/g);
-    this.amount = numb.join("");
+  transformAmount() {
+    let numb = this.orderAmount.match(/\d/g);
+    this.orderAmount = numb.join("");
 
-    if (this.currency == "USD") {
-      this.amount = this.currencyPipe.transform(this.amount, "USD", false);
-      this.amount = this.amount.replace("USD", "");
-      //element.target.value = this.amount;
-
-      console.log("USD");
+    if (this.orderCurrency == "USD") {
+      this.orderAmount = this.currencyPipe.transform(this.orderAmount, "USD", false);
+      this.orderAmount = this.orderAmount.replace("USD", "");
     } else {
-      this.amount = this.currencyPipe.transform(this.amount, "VND", false);
-      this.amount = this.amount.replace("VND", "");
-      //element.target.value = this.amount;
-
-      console.log("VND");
+      this.orderAmount = this.currencyPipe.transform(this.orderAmount, "VND", false);
+      this.orderAmount = this.orderAmount.replace("VND", "");
     }
   }
 
-  filterCardType(filterVal: any) {
-    const hosted = (<HTMLInputElement>document.getElementById("hosted")).value;
-    this.isDisableHosted = (filterVal === "Wallet" || hosted === "NO");
+  filterProvider(element: any) {
+    const method = (<HTMLInputElement>document.getElementById("integrationMethods")).value;
+    const Methods = this.UPC.integrationMethods;
+    const provider = element.value;
+    const Providers = this.UPC.paymentMethods;
 
-    switch (filterVal) {
-      case "international":
-        this.data = this.internationalOption;
-        this.bankSelect = "VISA";
-        this.isCVV = !(this.isDisableHosted === false);
-        this.currencyOption = this.currencyOptionMPGS;
-        break;
-      case "atm":
-        this.data = this.atmOption;
-        this.bankSelect = this.paymentProviders.bankDefault.value;
+    this.isDisableHosted = (
+      provider === Providers.Wallet.value ||
+      provider === Providers.Hub.value ||
+      method !== Methods.Hosted.value
+    );
+
+    switch (provider) {
+      case Providers.ATM.value:
+        this.paymentSourceOptions = this.UPC.paymentProviders[provider];
+        this.paymentSource = this.paymentSourceOptions[0].value;
         this.isCVV = true;
-        this.currencyOption = this.currencyOptionDomestic;
+        this.currencyOption = this.UPC.currencyDomestic;
         break;
-      case "Wallet":
-        this.data = this.momoOption;
-        this.bankSelect = "MOMO";
-        this.currencyOption = this.currencyOptionDomestic;
+
+      case Providers.International.value:
+        this.paymentSourceOptions = this.UPC.paymentProviders[provider];
+        this.paymentSource = this.paymentSourceOptions[0].value;
+        this.isCVV = !(this.isDisableHosted === false);
+        this.currencyOption = this.UPC.currencyMPGs;
         break;
-      case this.paymentGroups.hub.value:
-        this.data = this.hupOption;
-        this.bankSelect = this.paymentProviders.hub2c2p.value;
-        this.currencyOption = this.currencyOption2C2P;
+
+      case Providers.Wallet.value:
+        this.paymentSourceOptions = this.UPC.paymentProviders[provider];
+        this.paymentSource = this.paymentSourceOptions[0].value;
+        this.currencyOption = this.UPC.currencyDomestic;
+        break;
+
+      case Providers.Hub.value:
+        this.paymentSourceOptions = this.UPC.paymentProviders[provider];
+        this.paymentSource = this.paymentSourceOptions[0].value;
+        this.currencyOption = this.UPC.currency2C2P;
         break;
     }
 
-    this.setValueCardInfo(this.bankSelect);
+    this.setCardInfo();
   }
 
-  filterHosted(filterVal: any) {
-    switch (filterVal) {
-      case "YES":
-        const cardType = (<HTMLInputElement>document.getElementById("cardType")).value;
-        this.isDisableHosted = cardType === "Wallet";
-        this.isCVV = !(this.isDisableHosted == false && cardType === "international");
+  filterMethod(element: any) {
+    let method = element.value;
+    let Methods = this.UPC.integrationMethods;
+    let Providers = this.UPC.paymentMethods;
+
+    switch (method) {
+      // HOSTED
+      case Methods.Hosted.value:
+        const paymentMethod = (<HTMLInputElement>document.getElementById("paymentMethods")).value;
+        this.isDisableHosted = (paymentMethod === Providers.Wallet.value || paymentMethod === Providers.Hub.value);
+        this.isCVV = !(this.isDisableHosted == false && paymentMethod === Providers.International.value);
+        this.isPayWithOption = false;
         break;
-      case "NO":
+
+      // OPTION
+      case Methods.Option.value:
         this.isDisableHosted = true;
+        this.isPayWithOption = true;
+        break;
+
+      default:
+        this.isDisableHosted = true;
+        this.isPayWithOption = false;
         break;
     }
 
-    this.setValueCardInfo();
+    this.setCardInfo();
   }
 
-  selectBank(filterVal: any) {
-    this.setValueCardInfo();
+  filterPaymentSource() {
+    this.setCardInfo();
   }
 
-  setValueCardInfo(bankSelect = null) {
-    if (this.isCVV === false) {
-      const bank = bankSelect || (<HTMLSelectElement>document.getElementById("bank")).value;
-
-      if (bank === "VISA") {
+  setCardInfo() {
+    if (this.isCVV === false)
+    {
+      const source = this.paymentSource;
+      if (source === "VISA")
+      {
         this.labelCardDate = "Card Expire Date";
         this.cardNumber = "4508750015741019";
         this.cardHolderName = "Nguyen Van A"
         this.cardIssueDate = "01/39";
-      } else {
+      }
+      else
+      {
         this.labelCardDate = "Card Expire Date";
         this.cardNumber = "5123450000000008";
         this.cardHolderName = "Nguyen Van A"
         this.cardIssueDate = "01/39";
       }
-    } else {
-      this.labelCardDate = "Card Issue Date";
+    }
+    else
+    {
+      // NAPAS
+      this.labelCardDate = "Card Issue Date/Expire Date";
       this.cardNumber = "9704000000000018";
       this.cardHolderName = "Nguyen Van A"
       this.cardIssueDate = "03/07";
@@ -350,55 +181,45 @@ export class PaymentComponent {
   }
 
   public inProcess() {
-
     this.loading = true;
     this.isDisabledButton = true;
 
-    this.billNumber = (<HTMLInputElement>document.getElementById("billNumber")).value;
-    //this.firstName = (<HTMLInputElement>document.getElementById("firstName")).value;
-    //this.lastName = (<HTMLInputElement>document.getElementById("lastName")).value;
-    this.lang = (<HTMLInputElement>document.getElementById("language")).value;
-    //this.city = (<HTMLInputElement>document.getElementById("city")).value;
-    //this.email = (<HTMLInputElement>document.getElementById("email")).value;
-    this.amount = (<HTMLInputElement>document.getElementById("orderAmount")).value;
-    this.currency = (<HTMLSelectElement>document.getElementById("orderCurrency")).value;
-    this.description = (<HTMLInputElement>document.getElementById("orderDescription")).value;
-    this.cardtype = (<HTMLSelectElement>document.getElementById("cardType")).value;
-    this.bank = (<HTMLSelectElement>document.getElementById("bank")).value;
-    //this.request = (<HTMLSelectElement>document.getElementById("request")).value;
-    this.json = (<HTMLSelectElement>document.getElementById("extraData")).value;
+    // Selected Merchant
+    let merchant = {
+      apiKey: null,
+      salt:   null
+    };
 
-    this.cardNumber = (<HTMLSelectElement>document.getElementById("cardNumber")).value;
-    this.cardHolderName = (<HTMLSelectElement>document.getElementById("cardHolderName")).value;
-    this.cardIssueDate = (<HTMLSelectElement>document.getElementById("cardIssueDate")).value;
-    this.cardVerificationValue = (<HTMLSelectElement>document.getElementById("cardVerificationValue")).value;
-    this.IsHostedMerchant = (<HTMLSelectElement>document.getElementById("hosted")).value;
+    let elementMerchant = (<HTMLSelectElement>document.getElementById("merchant"));
+    if (elementMerchant != null)
+    {
+      this.APIKey = elementMerchant.value;
+      merchant = this.listAPIKey.find(item => item.value == this.APIKey);
+    }
 
-    var data = {
-      billNumber: this.billNumber,
-      //firstName: this.firstName,
-      //lastName: this.lastName,
+    let requestData = {
       language: this.lang,
-      //city: this.city,
-      //email: this.email,
-      orderAmount: this.amount,
-      orderCurrency: this.currency,
-      //address: this.address,
-      orderDescription: this.description,
-      cardType: this.cardtype,
-      bank: this.bank,
-      otp: this.otp,
+      billNumber: this.orderNumber,
+      orderAmount: this.orderAmount,
+      orderCurrency: this.orderCurrency,
+      orderDescription: this.orderDescription,
+      cardType: this.paymentMethod,
+      bank: this.paymentSource,
+      otp: "on",
       request: "purchase",
-      extraData: this.json,
+      extraData: this.extra,
       cardNumber: this.cardNumber,
       cardHolderName: this.cardHolderName,
       cardIssueDate: this.cardIssueDate,
       cardExpireDate: this.cardIssueDate,
       cardVerificationValue: this.cardVerificationValue,
-      isHostedMerchant: this.IsHostedMerchant === "YES"
+      integrationMethod: this.integrationMethod,
+      apiKey: merchant.apiKey,
+      salt: merchant.salt,
+      successURL: this.SuccessURL
     };
 
-    this.http.post<ResponseData>(this.baseUrl + 'api/client', data)
+    this.http.post<ResponseData>(this.baseUrl + 'api/client', requestData)
       .subscribe(
         result => {
           this.resultData = result;

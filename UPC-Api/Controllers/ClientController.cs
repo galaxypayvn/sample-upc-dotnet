@@ -158,8 +158,11 @@ namespace UPC.Api.Controllers
             
             try
             {
-                string url = _configuration.GetValue<string>("UPC:EndPoint");
-                string apiKey = _configuration.GetValue<string>("UPC:APIKey");
+                bool isHostedMerchant = requestData.IntegrationMethod == "HOSTED";
+                bool isPayWithOption = requestData.IntegrationMethod == "OPTION";
+                string route = isPayWithOption ? "payWithOption" : "pay";
+                string url = _configuration.GetValue<string>("UPC:EndPoint") + "/" + route;
+                string apiKey = requestData.ApiKey ?? _configuration.GetValue<string>("UPC:APIKey");
 
                 OrderData order = new();
                 order.OrderID = Guid.NewGuid().ToString();
@@ -169,12 +172,20 @@ namespace UPC.Api.Controllers
                 order.OrderCurrency = requestData.OrderCurrency;
                 order.OrderDescription = requestData.OrderDescription;
                 order.ExtraData = extraData!;
-                order.CardType = requestData.CardType;
-                order.Bank = requestData.Bank;
                 order.Language = requestData.Language;
+                order.SuccessURL = requestData.SuccessURL;
 
-                if (requestData.IsHostedMerchant &&
-                    requestData.CardType.ToUpper() != "WALLET")
+                // Simple Checkout & Hosted Checkout
+                if (isPayWithOption == false)
+                {
+                    order.CardType = requestData.CardType;
+                    order.Bank = requestData.Bank;
+                }
+                
+                // Hosted Checkout
+                if (isHostedMerchant &&
+                    requestData.CardType.ToUpper() != "WALLET" &&
+                    requestData.CardType.ToUpper() != "HUB")
                 {
                     order.CardNumber = requestData.CardNumber;
                     order.CardHolderName = requestData.CardHolderName;
@@ -192,7 +203,7 @@ namespace UPC.Api.Controllers
                 _logger.LogInformation("Request: " + content);
 
                 // Request to API /transaction
-                string sha256Salt = _configuration.GetValue<string>("UPC:Salt");
+                string sha256Salt = requestData.Salt ?? _configuration.GetValue<string>("UPC:Salt");
                 string signature = Hash(content, sha256Salt); // Hash 256
                 string response = ServiceBase.Post(url, content, apiKey, signature);
 

@@ -17,6 +17,8 @@ namespace UPC.Api.Model
 		public object ExtraData { get; set; }
 		public object Language { get; set; }
 		
+		public string? SuccessURL { get; set; }
+		
 		#region Hosted Merchant Only
 		public string? CardNumber { get; set; } = default!;
 		public string? CardHolderName { get; set; } = default!;

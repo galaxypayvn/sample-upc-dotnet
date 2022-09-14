@@ -3,7 +3,7 @@
     "UPC": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:9999",
+      "applicationUrl": "http://localhost:9000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

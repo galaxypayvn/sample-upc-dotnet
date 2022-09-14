@@ -1,60 +1,63 @@
 ﻿<h1 style="color: #fab82d">Checkout Page Demo</h1>
-<div>This is a simple example of an Angular/C# component. (<a href="https://gitlab.com/gpay-sample/upc/upc-dotnet">Source here!</a>) - v3.2.20220816.1008</div>
+<div>
+  This is a simple example of an Angular/C# component. (<a href="https://github.com/galaxypayvn/sample-upc-dotnet">Source
+  here!</a>) - v3.2.20220913.1747
+</div>
 
-<div class="container pading-top-10">
+<div class="container padding-top-10">
   <div class="row">
     <div class="col-sm-6">
-      <div class="pading-right-10 pading-left-10" id="transaction">
+      <div id="transaction">
+        <h3 style="color: #5d63a8">Merchant Information</h3>
+        <div class="row">
+          <div class="col-50 padding-left-15" *ngIf="listAPIKey.length > 0">
+            <label>Merchant Name</label>
+            <select id='merchant' class="form-control" name='people'>
+              <option *ngFor="let item of listAPIKey" [value]="item.value">
+                {{item.text}}
+              </option>
+            </select>
+          </div>
+          <div class="col-50 padding-left-15">
+            <label>Integration Methods</label>
+            <select id="integrationMethods" class="form-control" name="integrationMethods" [(ngModel)]="integrationMethod"
+                    (change)="filterMethod($event.target)">
+              <option *ngFor="let item of UPC.integrationMethods | keyvalue:sortOptions" [value]="item.value.value"
+                      [selected]="item.value.isDefault">
+                {{item.value.text}}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div style="padding-bottom: 30px" class="row">
+          <div class="col-100 padding-left-15">
+            <label>Result URL</label>
+            <input class="form-control" type="text" id="successURL" name="successURL" placeholder="Result URL"
+                   [(ngModel)]="SuccessURL"/>
+          </div>
+        </div>
+
         <h3 style="color: #5d63a8">Order Information</h3>
         <form method="post" action="#">
           <div>
             <div class="row">
-              <div class="col-100 pading-left-15">
+              <div class="col-100 padding-left-15">
                 <label>Order Number</label>
-                <input class="form-control" type="text" id="billNumber" name="billNumber" value="{{billNumber}}" placeholder="Bill Number"/>
-              </div>
-            </div>
-
-            <!--<div class="row">
-              <div class="col-50 pading-left-15">
-                <label>First Name</label>
-                <input class="form-control" type="text" id="firstName" name="firstName" value="{{firstName}}" placeholder="First name" className="form-control" />
-              </div>
-              <div class="col-50 pading-left-15">
-                <label>Last Name</label>
-                <input class="form-control" type="text" id="lastName" name="lastName" value="{{lastName}}" placeholder="Last name" className="form-control" />
+                <input class="form-control" type="text" id="orderNumber" name="orderNumber" [(ngModel)]="orderNumber"
+                       placeholder="Order Number"/>
               </div>
             </div>
 
             <div class="row">
-              <div class="col-100 pading-left-15">
-                <label>Email</label>
-                <input class="form-control" type="text" id="email" name="email" value="{{email}}" placeholder="Email" className="form-control" />
+              <div class="col-50 padding-left-15">
+                <label>Amount <span style="color:red;">*</span></label>
+                <input class="form-control" type="text" id="orderAmount" name="orderAmount" [(ngModel)]="orderAmount"
+                       (change)="transformAmount($event)"/>
               </div>
-            </div>
-
-            <div class="row">
-              <div class="col-50 pading-left-15">
-                <label>Address</label>
-                <input class="form-control" type="text" id="address" name="address" placeholder="Address" value="{{address}}" className="form-control" />
-              </div>
-              <div class="col-50 pading-left-15">
-                <label>City</label>
-                <select class="form-control" id="city" name="city" value="{{city}}">
-                  <option value="HCM" defaultValue="HCM">Ho Chi Minh City</option>
-                  <option value="Hanoi">Ha Noi</option>
-                </select>
-              </div>
-            </div>-->
-
-            <div class="row">
-              <div class="col-50 pading-left-15">
-                <label for="currency-field">Amount <span style="color:red;">*</span></label>
-                <input class="form-control" type="text" id="orderAmount" value="{{amount}}" (change)="transformAmount($event)" />
-              </div>
-              <div class="col-50 pading-left-15">
+              <div class="col-50 padding-left-15">
                 <label>Currency <span style="color:red;">*</span></label>
-                <select class="form-control" id="orderCurrency" name="orderCurrency" value="{{currency}}" (change)="transformAmount($event)">
+                <select class="form-control" id="orderCurrency" name="orderCurrency" [(ngModel)]="orderCurrency"
+                        (change)="transformAmount($event)">
                   <option *ngFor="let item of currencyOption" [value]="item.value">
                     {{item.text}}
                   </option>
@@ -64,54 +67,45 @@
           </div>
 
           <div class="row">
-            <div class="col-50 pading-left-15">
+            <div class="col-50 padding-left-15">
               <label>Description</label>
-              <input class="form-control" id="orderDescription" name="orderDescription" placeholder="Description" rows="2" value="{{description}}"/>
+              <input class="form-control" id="orderDescription" name="orderDescription" placeholder="Description"
+                     [(ngModel)]="orderDescription"/>
             </div>
-            <div class="col-50 pading-left-15">
+            <div class="col-50 padding-left-15">
               <label>Language <span style="color:red;">*</span></label>
-              <select class="form-control" id="language" name="language" value={{lang}}>
-                <option value="vi" defaultValue="vi">Tiếng Việt</option>
+              <select class="form-control" id="language" name="language" [(ngModel)]="lang">
+                <option value="vi" selected="selected">Tiếng Việt</option>
                 <option value="en">English</option>
               </select>
             </div>
           </div>
-
-          <div class="row">
-            <div class="col-100 pading-left-15">
-              <label>Merchant Hosted</label>
-              <select id='hosted' class="form-control" name='people' [(ngModel)]="hostSelect"
-                      (change)="filterHosted($event.target.value)">
-                <option *ngFor="let item of hosts" [value]="item.value">
-                  {{item.text}}
-                </option>
-              </select>
-            </div>
-          </div>
         </form>
-        <br />
+        <br/>
       </div>
     </div>
     <div class="col-sm-6">
-      <div class="pading-right-10 pading-left-10">
+      <div class="padding-left-20">
         <h3 style="color: #5d63a8">Payment Information</h3>
-        <div class="row">
-          <div class="col-100 pading-left-15">
+        <div class="row" [hidden]="isPayWithOption">
+          <div class="col-100 padding-left-15">
             <label>Service Provider <span style="color:red;">*</span></label>
-            <select class="form-control" name="cardType" id="cardType" [(ngModel)]="cardTypeSelect" value="{{cardtype}}" (change)="filterCardType($event.target.value)">
-              <option *ngFor="let item of cardType" [value]="item.value">
-                {{item.text}}
+            <select class="form-control" name="paymentMethods" id="paymentMethods" [(ngModel)]="paymentMethod"
+                    (change)="filterProvider($event.target)">
+              <option *ngFor="let item of UPC.paymentMethods | keyvalue:sortOptions" [value]="item.value.value"
+                      [selected]="item.value.isDefault">
+                {{item.value.text}}
               </option>
             </select>
           </div>
         </div>
-        <div class="row">
-          <div class="col-100 pading-left-15">
+        <div class="row" [hidden]="isPayWithOption">
+          <div class="col-100 padding-left-15">
             <label>Bank/Card Scheme/Wallet <span style="color:red;">*</span></label>
-            <select id='bank' class="form-control" name='people' [(ngModel)]="bankSelect"
-                    (change)="selectBank($event.target.value)">>
-              <option *ngFor="let item of data" [value]="item.value">
-                {{item.text}}
+            <select id='paymentSources' class="form-control" name='paymentSources' [(ngModel)]="paymentSource"
+                    (change)="filterPaymentSource()">>
+              <option *ngFor="let item of paymentSourceOptions | keyvalue:sortOptions" [value]="item.value.value">
+                {{item.value.text}}
               </option>
             </select>
           </div>
@@ -119,47 +113,50 @@
 
         <div [hidden]="isDisableHosted">
           <div class="row">
-            <div class="col-50 pading-left-15">
+            <div class="col-50 padding-left-15">
               <label>Card Number <span style="color:red;">*</span></label>
-              <input class="form-control" type="text" id="cardNumber" value="{{cardNumber}}"/>
+              <input class="form-control" type="text" id="cardNumber" name="cardNumber" [(ngModel)]="cardNumber"/>
             </div>
-            <div class="col-50 pading-left-15">
+            <div class="col-50 padding-left-15">
               <label>Card Holder Name <span style="color:red;">*</span></label>
-              <input class="form-control" type="text" id="cardHolderName" value="{{cardHolderName}}"/>
+              <input class="form-control" type="text" id="cardHolderName" name="cardHolderName"
+                     [(ngModel)]="cardHolderName"/>
             </div>
           </div>
 
           <div class="row">
-            <div class="col-50 pading-left-15">
+            <div class="col-50 padding-left-15">
               <label>{{labelCardDate}} <span style="color:red;">*</span></label>
-              <input class="form-control" type="text" id="cardIssueDate" value="{{cardIssueDate}}"/>
+              <input class="form-control" type="text" id="cardIssueDate" name="cardIssueDate"
+                     [(ngModel)]="cardIssueDate"/>
             </div>
-            <div class="col-50 pading-left-15" [hidden]="isCVV">
+            <div class="col-50 padding-left-15" [hidden]="isCVV">
               <label>CVV <span style="color:red;">*</span></label>
-              <input class="form-control" type="text" id="cardVerificationValue" value="{{cardVerificationValue}}"/>
+              <input class="form-control" type="text" id="cardVerificationValue" name="cardVerificationValue"
+                     [(ngModel)]="cardVerificationValue"/>
             </div>
           </div>
         </div>
-        <!--<div class="row">
-      <div class="col-100 pading-left-15">
-        <label>Request</label>
-        <select class="form-control" name="request" id="request" value="">
-          <option value="purchase">Purchase</option>
-        </select>
-      </div>
-    </div>-->
 
-        <br />
+        <br/>
         <div class="form-group">
           <div class="twelve columns">
-            <button class="btn btn-warning" [disabled]="isDisabledButton" (click)="inProcess()"><i class="fa fa-spinner fa-spin" *ngIf="loading"></i> Process</button>
+            <button class="btn btn-primary" [disabled]="isDisabledButton" (click)="inProcess()"><i
+              class="fa fa-spinner fa-spin" *ngIf="loading"></i> Submit
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="pading-left-10">
-    <label>Extra Data</label>
-    <textarea name="extraData" id='extraData' placeholder="Extra data" rows="10" value="{{extraData | json}}" className="form-control"></textarea>
+  <div class="row">
+    <div class="col-sm-12">
+      <div style="margin-top: -20px">
+        <label>Extra Data</label>
+        <textarea name="extraData" id='extraData' placeholder="Extra data" rows="10" [(ngModel)]="extra"
+                  class="form-control"></textarea>
+      </div>
+    </div>
   </div>
+  <br>
 </div>
