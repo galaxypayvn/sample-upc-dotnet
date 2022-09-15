@@ -34,7 +34,7 @@ export class PaymentComponent {
   public labelCardDate = "Card Issue Date";
   public integrationMethod = "SIMPLE";
   public APIKey = "";
-  public SuccessURL = "localhost:9000/api/success";
+  public SuccessURL: string;
 
   public resultData: ResponseData;
   public isPayWithOption = false;
@@ -56,6 +56,7 @@ export class PaymentComponent {
     this.paymentSourceOptions = this.UPC.paymentProviders[this.paymentMethod];
     this.paymentSource = this.UPC.paymentProviders[this.paymentMethod][0].value;
     this.extra = JSON.stringify(this.UPC.paymentExtra, null, 4);
+    this.SuccessURL = baseUrl + "api/result";
 
     this.currencyOption = this.UPC.currencyDomestic;
   }
