@@ -189,7 +189,6 @@ namespace UPC.Api.Controllers
                 {
                     order.CardNumber = requestData.CardNumber;
                     order.CardHolderName = requestData.CardHolderName;
-                    order.CardIssueDate = requestData.CardIssueDate;
                     order.CardExpireDate = requestData.CardExpireDate;
                     order.CardVerificationValue = requestData.CardVerificationValue;
                 }

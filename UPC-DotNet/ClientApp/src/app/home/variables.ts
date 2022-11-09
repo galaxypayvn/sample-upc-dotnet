@@ -18,11 +18,12 @@ export class UPC {
   public paymentProviders = {
     atm: [
       { value: "", text: "VIETNAM LOCAL BANKS", isDefault: true, order: 1 },
-      { value: "970400", text: "SAIGON BANK/NGÂN HÀNG TMCP SÀI GÒN CÔNG THƯƠNG", isDefault: false, order: 2 },
+      { value: "SAIGONBANK", text: "SAIGON BANK/NGÂN HÀNG TMCP SÀI GÒN CÔNG THƯƠNG", isDefault: false, order: 2 },
     ],
     international: [
       { value: "VISA", text: "VISA CARD", isDefault: true, order: 1 },
       { value: "MASTER", text: "MASTER CARD", isDefault: false, order: 2 },
+      { value: "JCB", text: "JCB CARD", isDefault: false, order: 3 },
     ],
     wallet: [
       { value: "GPAY", text: "GPAY eWALLET", isDefault: true, order: 1 },

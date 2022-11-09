@@ -29,7 +29,7 @@ export class PaymentComponent {
   public currencyOption: any;
   public cardNumber = "9704000000000018";
   public cardHolderName = "Nguyen Van A";
-  public cardIssueDate = "03/07";
+  public cardExpireDate = "03/07";
   public cardVerificationValue = "100";
   public labelCardDate = "Card Issue Date";
   public integrationMethod = "SIMPLE";
@@ -161,14 +161,14 @@ export class PaymentComponent {
         this.labelCardDate = "Card Expire Date";
         this.cardNumber = "4508750015741019";
         this.cardHolderName = "Nguyen Van A"
-        this.cardIssueDate = "01/39";
+        this.cardExpireDate = "01/39";
       }
       else
       {
         this.labelCardDate = "Card Expire Date";
         this.cardNumber = "5123450000000008";
         this.cardHolderName = "Nguyen Van A"
-        this.cardIssueDate = "01/39";
+        this.cardExpireDate = "01/39";
       }
     }
     else
@@ -177,7 +177,7 @@ export class PaymentComponent {
       this.labelCardDate = "Card Issue Date/Expire Date";
       this.cardNumber = "9704000000000018";
       this.cardHolderName = "Nguyen Van A"
-      this.cardIssueDate = "03/07";
+      this.cardExpireDate = "03/07";
     }
   }
 
@@ -211,8 +211,7 @@ export class PaymentComponent {
       extraData: this.extra,
       cardNumber: this.cardNumber,
       cardHolderName: this.cardHolderName,
-      cardIssueDate: this.cardIssueDate,
-      cardExpireDate: this.cardIssueDate,
+      cardExpireDate: this.cardExpireDate,
       cardVerificationValue: this.cardVerificationValue,
       integrationMethod: this.integrationMethod,
       apiKey: merchant.apiKey,
