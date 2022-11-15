@@ -51,6 +51,54 @@ export class UPC {
     {
       value: "USD",
       text: "USD",
+    },
+    {
+      value: "THB",
+      text: "THB",
+    },
+    {
+      value: "JPY",
+      text: "JPY",
+    },
+    {
+      value: "INR",
+      text: "INR",
+    },
+    {
+      value: "TWD",
+      text: "TWD",
+    },
+    {
+      value: "MYR",
+      text: "MYR",
+    },
+    {
+      value: "SGD",
+      text: "SGD",
+    },
+    {
+      value: "KRW",
+      text: "KRW",
+    },
+    {
+      value: "KHR",
+      text: "KHR",
+    },
+    {
+      value: "MMK",
+      text: "MMK",
+    },
+    {
+      value: "IDR",
+      text: "IDR",
+    },
+    {
+      value: "HKD",
+      text: "HKD",
+    },
+    {
+      value: "CNY",
+      text: "CNY",
     }
   ]
 
