@@ -17,12 +17,12 @@ export class PaymentComponent {
   public paymentSourceOptions: any;
 
   //configMerchant;
-  public merchant = (<HTMLSelectElement>document.getElementById("txtlistMerchant")).value;
+  public merchant = (<HTMLSelectElement>document.getElementById("txtListMerchant")).value;
   public listAPIKey = JSON.parse(this.merchant);
 
   public lang = "vi";
   public orderNumber = Math.floor((Math.random() * 100000)).toString();
-  public orderAmount = "10,000";
+  public orderAmount = "10,000.00";
   public orderCurrency = "VND";
   public orderDescription = "Secure Page Demo";
   public extra: string;
@@ -66,14 +66,12 @@ export class PaymentComponent {
   transformAmount() {
     let numb = this.orderAmount.match(/\d/g);
     this.orderAmount = numb.join("");
+    let lastChar = this.orderAmount.substr(this.orderAmount.length - 2);
+    this.orderAmount = this.orderAmount.slice(0, -2);
 
-    if (this.orderCurrency == "USD") {
-      this.orderAmount = this.currencyPipe.transform(this.orderAmount, "USD", false);
-      this.orderAmount = this.orderAmount.replace("USD", "");
-    } else {
-      this.orderAmount = this.currencyPipe.transform(this.orderAmount, "VND", false);
-      this.orderAmount = this.orderAmount.replace("VND", "");
-    }
+    this.orderAmount = this.currencyPipe.transform(this.orderAmount, "USD", false);
+    this.orderAmount = this.orderAmount.replace("USD", "")
+                                       .replace(".00", "."+lastChar);
   }
 
   filterProvider(element: any) {

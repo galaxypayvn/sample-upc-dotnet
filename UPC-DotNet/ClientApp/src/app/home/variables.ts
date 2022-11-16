@@ -245,22 +245,22 @@ export class UPC {
       ]
     },
     billing: {
-      countryCode: "vn",
-      stateProvine: "Hồ Chí Minh",
-      cityName: "Nhà Bè",
+      country: "vn",
+      state: "Hồ Chí Minh",
+      city: "Nhà Bè",
       postalCode: "",
       streetNumber: "673",
-      addressLine1: "Đường Nguyễn Hữu Thọ",
-      addressLine2: ""
+      address01: "Đường Nguyễn Hữu Thọ",
+      address02: ""
     },
     shipping: {
-      countryCode: "vn",
-      stateProvine: "Hồ Chí Minh",
-      cityName: "Nhà Bè",
+      country: "vn",
+      state: "Hồ Chí Minh",
+      city: "Nhà Bè",
       postalCode: "",
       streetNumber: "673",
-      addressLine1: "Đường Nguyễn Hữu Thọ",
-      addressLine2: ""
+      address01: "Đường Nguyễn Hữu Thọ",
+      address02: ""
     }
   }
 }
