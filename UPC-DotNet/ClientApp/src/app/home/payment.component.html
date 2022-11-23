@@ -1,7 +1,7 @@
 ﻿<h1 style="color: #fab82d">Checkout Page Demo</h1>
 <div>
   This is a simple example of an Angular/C# component. (<a href="https://github.com/galaxypayvn/sample-upc-dotnet">Source
-  here!</a>) - v3.2.20220913.1747
+  here!</a>) - v3.4.20221123.1722
 </div>
 
 <div class="container padding-top-10">
@@ -127,8 +127,8 @@
           <div class="row">
             <div class="col-50 padding-left-15">
               <label>{{labelCardDate}} <span style="color:red;">*</span></label>
-              <input class="form-control" type="text" id="cardIssueDate" name="cardIssueDate"
-                     [(ngModel)]="cardIssueDate"/>
+              <input class="form-control" type="text" id="cardExpireDate" name="cardExpireDate"
+                     [(ngModel)]="cardExpireDate"/>
             </div>
             <div class="col-50 padding-left-15" [hidden]="isCVV">
               <label>CVV <span style="color:red;">*</span></label>

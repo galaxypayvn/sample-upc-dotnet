@@ -17,8 +17,8 @@ export class PaymentComponent {
   public paymentSourceOptions: any;
 
   //configMerchant;
-  public merchant = (<HTMLSelectElement>document.getElementById("txtlistMerchant")).value;
-  public listAPIKey = JSON.parse(this.merchant);
+  public merchant = null;
+  public listAPIKey = null;
 
   public lang = "vi";
   public orderNumber = Math.floor((Math.random() * 100000)).toString();
@@ -29,7 +29,7 @@ export class PaymentComponent {
   public currencyOption: any;
   public cardNumber = "9704000000000018";
   public cardHolderName = "Nguyen Van A";
-  public cardIssueDate = "03/07";
+  public cardExpireDate = "03/07";
   public cardVerificationValue = "100";
   public labelCardDate = "Card Issue Date";
   public integrationMethod = "SIMPLE";
@@ -59,20 +59,31 @@ export class PaymentComponent {
     this.SuccessURL = baseUrl + "api/result";
 
     this.currencyOption = this.UPC.currencyDomestic;
+
+    let listMerchant = (<HTMLSelectElement>document.getElementById("txtListMerchant"));
+    if (listMerchant){
+      this.merchant = listMerchant.value;
+      this.listAPIKey = JSON.parse(this.merchant);
+    }
   }
 
   sortOptions = (a, b): number => { return a.value.order > b.value.order ? 1 : 0; }
 
   transformAmount() {
-    let numb = this.orderAmount.match(/\d/g);
-    this.orderAmount = numb.join("");
+    let parts = this.orderAmount.split(".");
+    let even = parts[0].match(/\d/g);
+    let odd = parts[1] || "00";
+    this.orderAmount = even.join("");
 
-    if (this.orderCurrency == "USD") {
-      this.orderAmount = this.currencyPipe.transform(this.orderAmount, "USD", false);
-      this.orderAmount = this.orderAmount.replace("USD", "");
-    } else {
+    if (parts.length == 1) {
       this.orderAmount = this.currencyPipe.transform(this.orderAmount, "VND", false);
       this.orderAmount = this.orderAmount.replace("VND", "");
+    }
+    else{
+      this.orderAmount = this.currencyPipe.transform(this.orderAmount, "USD", false);
+      this.orderAmount = this.orderAmount
+        .replace("USD", "")
+        .replace(".00", "." + odd);
     }
   }
 
@@ -159,16 +170,18 @@ export class PaymentComponent {
       if (source === "VISA")
       {
         this.labelCardDate = "Card Expire Date";
-        this.cardNumber = "4508750015741019";
+        this.cardNumber = "4456530000001096";
         this.cardHolderName = "Nguyen Van A"
-        this.cardIssueDate = "01/39";
+        this.cardExpireDate = "12/30";
+        this.cardVerificationValue = "111";
       }
       else
       {
         this.labelCardDate = "Card Expire Date";
-        this.cardNumber = "5123450000000008";
+        this.cardNumber = "5506922400634930";
         this.cardHolderName = "Nguyen Van A"
-        this.cardIssueDate = "01/39";
+        this.cardExpireDate = "01/39";
+        this.cardVerificationValue = "100";
       }
     }
     else
@@ -177,7 +190,7 @@ export class PaymentComponent {
       this.labelCardDate = "Card Issue Date/Expire Date";
       this.cardNumber = "9704000000000018";
       this.cardHolderName = "Nguyen Van A"
-      this.cardIssueDate = "03/07";
+      this.cardExpireDate = "03/07";
     }
   }
 
@@ -211,8 +224,7 @@ export class PaymentComponent {
       extraData: this.extra,
       cardNumber: this.cardNumber,
       cardHolderName: this.cardHolderName,
-      cardIssueDate: this.cardIssueDate,
-      cardExpireDate: this.cardIssueDate,
+      cardExpireDate: this.cardExpireDate,
       cardVerificationValue: this.cardVerificationValue,
       integrationMethod: this.integrationMethod,
       apiKey: merchant.apiKey,

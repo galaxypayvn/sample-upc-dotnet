@@ -18,15 +18,18 @@ export class UPC {
   public paymentProviders = {
     atm: [
       { value: "", text: "VIETNAM LOCAL BANKS", isDefault: true, order: 1 },
-      { value: "970400", text: "SAIGON BANK/NGÂN HÀNG TMCP SÀI GÒN CÔNG THƯƠNG", isDefault: false, order: 2 },
+      { value: "SAIGONBANK", text: "SAIGON BANK/NGÂN HÀNG TMCP SÀI GÒN CÔNG THƯƠNG", isDefault: false, order: 2 },
     ],
     international: [
       { value: "VISA", text: "VISA CARD", isDefault: true, order: 1 },
       { value: "MASTER", text: "MASTER CARD", isDefault: false, order: 2 },
+      { value: "JCB", text: "JCB CARD", isDefault: false, order: 3 },
+      { value: "AMEX", text: "AMERICAN EXPRESS CARD", isDefault: false, order: 3 },
     ],
     wallet: [
       { value: "GPAY", text: "GPAY eWALLET", isDefault: true, order: 1 },
       { value: "MOMO", text: "MOMO eWALLET", isDefault: false, order: 2 },
+      { value: "ZALOPAY", text: "ZALOPAY eWALLET", isDefault: false, order: 2 },
     ],
     hub: [
       { value: "2C2P", text: "2C2P HUB", isDefault: true, order: 1 },
@@ -50,6 +53,58 @@ export class UPC {
     {
       value: "USD",
       text: "USD",
+    },
+    {
+      value: "THB",
+      text: "THB",
+    },
+    {
+      value: "JPY",
+      text: "JPY",
+    },
+    {
+      value: "INR",
+      text: "INR",
+    },
+    {
+      value: "TWD",
+      text: "TWD",
+    },
+    {
+      value: "MYR",
+      text: "MYR",
+    },
+    {
+      value: "SGD",
+      text: "SGD",
+    },
+    {
+      value: "KRW",
+      text: "KRW",
+    },
+    {
+      value: "KHR",
+      text: "KHR",
+    },
+    {
+      value: "MMK",
+      text: "MMK",
+    },
+    {
+      value: "IDR",
+      text: "IDR",
+    },
+    {
+      value: "HKD",
+      text: "HKD",
+    },
+    {
+      value: "CNY",
+      text: "CNY",
+    },
+    {
+      value: "AUD",
+      text: "AUD",
     }
   ]
 
@@ -110,6 +165,10 @@ export class UPC {
     {
       value: "CNY",
       text: "CNY",
+    },
+    {
+      value: "AUD",
+      text: "AUD",
     }
   ]
 
@@ -196,22 +255,22 @@ export class UPC {
       ]
     },
     billing: {
-      countryCode: "vn",
-      stateProvine: "Hồ Chí Minh",
-      cityName: "Nhà Bè",
+      country: "vn",
+      state: "Hồ Chí Minh",
+      city: "Nhà Bè",
       postalCode: "",
       streetNumber: "673",
-      addressLine1: "Đường Nguyễn Hữu Thọ",
-      addressLine2: ""
+      address01: "Đường Nguyễn Hữu Thọ",
+      address02: ""
     },
     shipping: {
-      countryCode: "vn",
-      stateProvine: "Hồ Chí Minh",
-      cityName: "Nhà Bè",
+      country: "vn",
+      state: "Hồ Chí Minh",
+      city: "Nhà Bè",
       postalCode: "",
       streetNumber: "673",
-      addressLine1: "Đường Nguyễn Hữu Thọ",
-      addressLine2: ""
+      address01: "Đường Nguyễn Hữu Thọ",
+      address02: ""
     }
   }
 }

@@ -22,7 +22,6 @@ namespace UPC.Api.Model
 		#region Hosted Merchant Only
 		public string? CardNumber { get; set; } = default!;
 		public string? CardHolderName { get; set; } = default!;
-		public string? CardIssueDate { get; set; } = default!;
 		public string? CardExpireDate { get; set; } = default!;
 		public string? CardVerificationValue { get; set; } = default!;
 		#endregion
