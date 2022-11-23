@@ -28,6 +28,7 @@ export class UPC {
     wallet: [
       { value: "GPAY", text: "GPAY eWALLET", isDefault: true, order: 1 },
       { value: "MOMO", text: "MOMO eWALLET", isDefault: false, order: 2 },
+      { value: "ZALOPAY", text: "ZALOPAY eWALLET", isDefault: false, order: 2 },
     ],
     hub: [
       { value: "2C2P", text: "2C2P HUB", isDefault: true, order: 1 },
@@ -99,6 +100,10 @@ export class UPC {
     {
       value: "CNY",
       text: "CNY",
+    },
+    {
+      value: "AUD",
+      text: "AUD",
     }
   ]
 
@@ -159,6 +164,10 @@ export class UPC {
     {
       value: "CNY",
       text: "CNY",
+    },
+    {
+      value: "AUD",
+      text: "AUD",
     }
   ]
 

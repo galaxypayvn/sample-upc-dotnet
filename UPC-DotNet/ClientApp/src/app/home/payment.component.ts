@@ -17,12 +17,12 @@ export class PaymentComponent {
   public paymentSourceOptions: any;
 
   //configMerchant;
-  public merchant = (<HTMLSelectElement>document.getElementById("txtListMerchant")).value;
-  public listAPIKey = JSON.parse(this.merchant);
+  public merchant = null;
+  public listAPIKey = null;
 
   public lang = "vi";
   public orderNumber = Math.floor((Math.random() * 100000)).toString();
-  public orderAmount = "10,000.00";
+  public orderAmount = "10,000";
   public orderCurrency = "VND";
   public orderDescription = "Secure Page Demo";
   public extra: string;
@@ -59,19 +59,33 @@ export class PaymentComponent {
     this.SuccessURL = baseUrl + "api/result";
 
     this.currencyOption = this.UPC.currencyDomestic;
+
+    let listMerchant = (<HTMLSelectElement>document.getElementById("txtListMerchant"));
+    if (listMerchant){
+      this.merchant = listMerchant.value;
+      this.listAPIKey = JSON.parse(this.merchant);
+    }
   }
 
   sortOptions = (a, b): number => { return a.value.order > b.value.order ? 1 : 0; }
 
   transformAmount() {
+    let isFloat = this.orderAmount.includes(".");
     let numb = this.orderAmount.match(/\d/g);
     this.orderAmount = numb.join("");
-    let lastChar = this.orderAmount.substr(this.orderAmount.length - 2);
-    this.orderAmount = this.orderAmount.slice(0, -2);
 
-    this.orderAmount = this.currencyPipe.transform(this.orderAmount, "USD", false);
-    this.orderAmount = this.orderAmount.replace("USD", "")
-                                       .replace(".00", "."+lastChar);
+    if (isFloat == false) {
+      this.orderAmount = this.currencyPipe.transform(this.orderAmount, "VND", false);
+      this.orderAmount = this.orderAmount.replace("VND", "");
+    }
+    else{
+      let lastChar = this.orderAmount.substr(this.orderAmount.length - 2);
+      this.orderAmount = this.orderAmount.slice(0, -2);
+
+      this.orderAmount = this.currencyPipe.transform(this.orderAmount, "USD", false);
+      this.orderAmount = this.orderAmount.replace("USD", "")
+        .replace(".00", "."+lastChar);
+    }
   }
 
   filterProvider(element: any) {
@@ -157,16 +171,18 @@ export class PaymentComponent {
       if (source === "VISA")
       {
         this.labelCardDate = "Card Expire Date";
-        this.cardNumber = "4508750015741019";
+        this.cardNumber = "4456530000001096";
         this.cardHolderName = "Nguyen Van A"
-        this.cardExpireDate = "01/39";
+        this.cardExpireDate = "12/30";
+        this.cardVerificationValue = "111";
       }
       else
       {
         this.labelCardDate = "Card Expire Date";
-        this.cardNumber = "5123450000000008";
+        this.cardNumber = "5506922400634930";
         this.cardHolderName = "Nguyen Van A"
         this.cardExpireDate = "01/39";
+        this.cardVerificationValue = "100";
       }
     }
     else
