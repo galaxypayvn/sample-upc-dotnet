@@ -22,6 +22,11 @@ namespace UPC.Api.Controllers
     [Route("api")]
     public class ClientController : ControllerBase
     {
+        private readonly string _successUrl;
+        private readonly string _failureUrl;
+        private readonly string _cancelUrl;
+        private readonly string _ipnUrl;
+        private readonly string _checksumText = "{\"checksum\":\"failure\"}";
         private readonly ILogger<ClientController> _logger;
         private readonly IConfiguration _configuration;
         private static Timer _logTimer;
@@ -63,6 +68,11 @@ namespace UPC.Api.Controllers
         {
             _logger = logger;
             _configuration = configuration;
+            
+            _successUrl = _configuration.GetValue<string>("UPC:SuccessURL");
+            _failureUrl = _configuration.GetValue<string>("UPC:FailureURL");
+            _cancelUrl = _configuration.GetValue<string>("UPC:CancelURL");
+            _ipnUrl = _configuration.GetValue<string>("UPC:IpnURL");
         }
 
         [HttpPost]
@@ -162,7 +172,7 @@ namespace UPC.Api.Controllers
                 bool isPayWithOption = requestData.IntegrationMethod == "OPTION";
                 string route = isPayWithOption ? "payWithOption" : "pay";
                 string url = _configuration.GetValue<string>("UPC:EndPoint") + "/" + route;
-                string apiKey = requestData.ApiKey ?? _configuration.GetValue<string>("UPC:APIKey");
+                string apiKey = _configuration.GetValue<string>($"Merchants:{requestData.MerchantID}:APIKey");
 
                 OrderData order = new();
                 order.OrderID = Guid.NewGuid().ToString();
@@ -173,19 +183,31 @@ namespace UPC.Api.Controllers
                 order.OrderDescription = requestData.OrderDescription;
                 order.ExtraData = extraData!;
                 order.Language = requestData.Language;
-                order.SuccessURL = requestData.SuccessURL;
+
+                string? successUrl = requestData.SuccessURL;
+                if (requestData.SuccessURL == _successUrl)
+                {
+                    successUrl = CallBackUrl(requestData.SuccessURL, requestData.MerchantID);
+                }
+
+                order.SuccessURL = string.IsNullOrEmpty(requestData.SuccessURL) == false
+                    ? successUrl
+                    : CallBackUrl(_successUrl, requestData.MerchantID);
+                order.FailureURL = CallBackUrl(_failureUrl, requestData.MerchantID);
+                order.CancelURL = CallBackUrl(_cancelUrl, requestData.MerchantID);
+                order.IpnURL = CallBackUrl(_ipnUrl, requestData.MerchantID);
 
                 // Simple Checkout & Hosted Checkout
                 if (isPayWithOption == false)
                 {
-                    order.CardType = requestData.CardType;
-                    order.Bank = requestData.Bank;
+                    order.SourceType = requestData.SourceType;
+                    order.PaymentMethod = requestData.PaymentMethod;
                 }
                 
                 // Hosted Checkout
                 if (isHostedMerchant &&
-                    requestData.CardType.ToUpper() != "WALLET" &&
-                    requestData.CardType.ToUpper() != "HUB")
+                    requestData.PaymentMethod.ToUpper() != "WALLET" &&
+                    requestData.PaymentMethod.ToUpper() != "HUB")
                 {
                     order.CardNumber = requestData.CardNumber;
                     order.CardHolderName = requestData.CardHolderName;
@@ -202,7 +224,7 @@ namespace UPC.Api.Controllers
                 _logger.LogInformation("Request: " + content);
 
                 // Request to API /transaction
-                string sha256Salt = requestData.Salt ?? _configuration.GetValue<string>("UPC:Salt");
+                string sha256Salt = _configuration.GetValue<string>($"Merchants:{requestData.MerchantID}:Salt");
                 string signature = Hash(content, sha256Salt); // Hash 256
                 string response = ServiceBase.Post(url, content, apiKey, signature);
 
@@ -224,34 +246,25 @@ namespace UPC.Api.Controllers
             }
         }
 
-        private string ClientUrl
-        {
-            get
-            {
-                HttpRequest request = HttpContext.Request;
-                string host = request.Host.ToString();
-                string protocol = request.IsHttps ? "https" : "http";
-
-                return $"{protocol}://{host}";
-            }
-        }
-
         [HttpGet]
-        [Route("cancel")]
-        public RedirectResult OnCancelCallback([FromQuery] CallbackData model)
+        [Route("cancel/{merchant}")]
+        public RedirectResult OnCancelCallback([FromQuery] CallbackData model, string merchant)
         {
-            return ProcessCancel(model);
+            return ProcessCancel(model, merchant);
         }
 
         [HttpPost]
-        [Route("cancel")]
-        public RedirectResult OnCancelPostback([FromForm] CallbackData model)
+        [Route("cancel/{merchant}")]
+        public RedirectResult OnCancelPostback([FromForm] CallbackData model, string merchant)
         {
-            return ProcessCancel(model);
+            return ProcessCancel(model, merchant);
         }
 
-        private RedirectResult ProcessCancel(CallbackData model)
+        private RedirectResult ProcessCancel(CallbackData model, string merchant)
         {
+            bool checkSum = CheckSumData(model, merchant);
+            _logger.LogInformation("Cancel checksum data: " + checkSum);
+
             string response = FromBase64String(model.Data);
             _logger.LogInformation("Cancel URL Callback: " + response);
 
@@ -268,7 +281,7 @@ namespace UPC.Api.Controllers
             TransactionData transaction = new();
             transaction.TransactionID = order.TransactionID;
             transaction.RawContent = content;
-            transaction.ResponseContent = response;
+            transaction.ResponseContent = checkSum ? response : _checksumText;
             UpdateResultToCache(transaction);
             
             string url = $"{ClientUrl}/router?method=cancel&transactionID=" + order.TransactionID;
@@ -277,21 +290,24 @@ namespace UPC.Api.Controllers
         
         
         [HttpGet]
-        [Route("result")]
-        public RedirectResult OnResultCallback([FromQuery] CallbackData model)
+        [Route("result/{merchant}")]
+        public RedirectResult OnResultCallback([FromQuery] CallbackData model, string merchant)
         {
-            return ProcessResult(model);
+            return ProcessResult(model, merchant);
         }
         
         [HttpPost]
-        [Route("result")]
-        public RedirectResult OnResultPostback([FromForm] CallbackData model)
+        [Route("result/{merchant}")]
+        public RedirectResult OnResultPostback([FromForm] CallbackData model, string merchant)
         {
-            return ProcessResult(model);
+            return ProcessResult(model, merchant);
         }
 
-        private RedirectResult ProcessResult(CallbackData model)
+        private RedirectResult ProcessResult(CallbackData model, string merchant)
         {
+            bool checkSum = CheckSumData(model, merchant);
+            _logger.LogInformation("Result checksum data: " + checkSum);
+
             string response = FromBase64String(model.Data);
             _logger.LogInformation("Result URL Callback: " + response);
 
@@ -310,7 +326,7 @@ namespace UPC.Api.Controllers
             transaction.ResultResponseTime = GetDateString(serviceResponse?.ResponseDateTime);
             transaction.ResponseCode = serviceResponse?.ResponseCode;
             transaction.RawContent = content;
-            transaction.ResponseContent = response;
+            transaction.ResponseContent = checkSum ? response : _checksumText;
             transaction.OrderNumber = order.OrderNumber;
             transaction.OrderAmount = order.OrderAmount.ToString(CultureInfo.InvariantCulture);
             transaction.OrderCurrency = order.OrderCurrency;
@@ -322,9 +338,12 @@ namespace UPC.Api.Controllers
         }
         
         [HttpPost]
-        [Route("ipn")]
-        public void OnIPNCallback([FromBody] CallbackData model)
+        [Route("ipn/{merchant}")]
+        public void OnIPNCallback([FromBody] CallbackData model, string merchant)
         {
+            bool checkSum = CheckSumData(model, merchant);
+            _logger.LogInformation("IPN checksum data: " + checkSum);
+
             string response = FromBase64String(model.Data);
             _logger.LogInformation("IPN URL PostBack: " + response);
             
@@ -343,9 +362,27 @@ namespace UPC.Api.Controllers
             transaction.IPNResponseTime = GetDateString(serviceResponse?.ResponseDateTime);
             transaction.ResponseCode = serviceResponse?.ResponseCode;
             transaction.IPNRawContent = content;
-            transaction.IPNResponseContent = response;
+            transaction.IPNResponseContent = checkSum ? response : _checksumText;
             
             UpdateIpnToCache(transaction);
+        }
+
+        private bool CheckSumData(CallbackData? model, string merchant)
+        {
+            if (model == null)
+            {
+                return false;
+            }
+            
+            string sha256Salt = _configuration.GetValue<string>($"Merchants:{merchant}:Salt");
+            string signature = Hash(model.Data, sha256Salt);
+            
+            if (signature == model.Signature)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static string GetDateString(string? value)
@@ -387,7 +424,7 @@ namespace UPC.Api.Controllers
                 : string.Empty;
         }
 
-        public static string Hash(
+        private static string Hash(
             string plainText, 
             string? salt = "", 
             HashAlgorithm? algorithm = null,
@@ -404,6 +441,23 @@ namespace UPC.Api.Controllers
         private string FromBase64String(string value)
         {
             return Encoding.UTF8.GetString(Convert.FromBase64String(value));
+        }
+        
+        private string ClientUrl
+        {
+            get
+            {
+                HttpRequest request = HttpContext.Request;
+                string host = request.Host.ToString();
+                string protocol = request.IsHttps ? "https" : "http";
+
+                return $"{protocol}://{host}";
+            }
+        }
+
+        private string? CallBackUrl(string? url, string? merchant)
+        {
+            return url + "/" + merchant;
         }
     }
 }

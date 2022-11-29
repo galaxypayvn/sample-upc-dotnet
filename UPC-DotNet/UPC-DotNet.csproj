@@ -13,6 +13,7 @@
         <RootNamespace>UPC.DotNet</RootNamespace>
         <Authors>Lunar</Authors>
         <AssemblyName>UPC.DotNet</AssemblyName>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(RunConfiguration)' == 'UPC' " />

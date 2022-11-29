@@ -16,7 +16,7 @@ export class PaymentComponent {
   public paymentSource: string;
   public paymentSourceOptions: any;
 
-  //configMerchant;
+  // configMerchant;
   public merchant = null;
   public listAPIKey = null;
 
@@ -33,8 +33,8 @@ export class PaymentComponent {
   public cardVerificationValue = "100";
   public labelCardDate = "Card Issue Date";
   public integrationMethod = "SIMPLE";
-  public APIKey = "";
-  public SuccessURL: string;
+  public merchantID = "";
+  public successURL: string;
 
   public resultData: ResponseData;
   public isPayWithOption = false;
@@ -56,7 +56,7 @@ export class PaymentComponent {
     this.paymentSourceOptions = this.UPC.paymentProviders[this.paymentMethod];
     this.paymentSource = this.UPC.paymentProviders[this.paymentMethod][0].value;
     this.extra = JSON.stringify(this.UPC.paymentExtra, null, 4);
-    this.SuccessURL = baseUrl + "api/result";
+    this.successURL = baseUrl + "api/result";
 
     this.currencyOption = this.UPC.currencyDomestic;
 
@@ -198,17 +198,10 @@ export class PaymentComponent {
     this.loading = true;
     this.isDisabledButton = true;
 
-    // Selected Merchant
-    let merchant = {
-      apiKey: null,
-      salt:   null
-    };
-
     let elementMerchant = (<HTMLSelectElement>document.getElementById("merchant"));
     if (elementMerchant != null)
     {
-      this.APIKey = elementMerchant.value;
-      merchant = this.listAPIKey.find(item => item.value == this.APIKey);
+      this.merchantID = elementMerchant.value;
     }
 
     let requestData = {
@@ -217,19 +210,16 @@ export class PaymentComponent {
       orderAmount: this.orderAmount,
       orderCurrency: this.orderCurrency,
       orderDescription: this.orderDescription,
-      cardType: this.paymentMethod,
-      bank: this.paymentSource,
-      otp: "on",
-      request: "purchase",
+      paymentMethod: this.paymentMethod,
+      sourceType: this.paymentSource,
       extraData: this.extra,
       cardNumber: this.cardNumber,
       cardHolderName: this.cardHolderName,
       cardExpireDate: this.cardExpireDate,
       cardVerificationValue: this.cardVerificationValue,
       integrationMethod: this.integrationMethod,
-      apiKey: merchant.apiKey,
-      salt: merchant.salt,
-      successURL: this.SuccessURL
+      merchantID: this.merchantID,
+      successURL: this.successURL
     };
 
     this.http.post<ResponseData>(this.baseUrl + 'api/client', requestData)
