@@ -42,7 +42,7 @@ public class Startup
         {
             configuration.RootPath = "ClientApp/dist";
         });
-
+        
         SelfLog.Enable(Log.Error);
         LoggerConfiguration loggerConfiguration = new LoggerConfiguration()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)

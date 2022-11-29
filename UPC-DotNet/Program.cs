@@ -20,5 +20,6 @@ public static class Program
                 webBuilder
                     .UseStartup<Startup>();
             })
+            .UseSerilog((_, _) => { }, true) // Docker support
             .UseSerilog();
 }
