@@ -35,6 +35,7 @@ export class PaymentComponent {
   public integrationMethod = "SIMPLE";
   public merchantID = "";
   public successURL: string;
+  public ipnURL: string;
 
   public resultData: ResponseData;
   public isPayWithOption = false;
@@ -57,6 +58,7 @@ export class PaymentComponent {
     this.paymentSource = this.UPC.paymentProviders[this.paymentMethod][0].value;
     this.extra = JSON.stringify(this.UPC.paymentExtra, null, 4);
     this.successURL = baseUrl + "api/result";
+    this.ipnURL = baseUrl + "api/ipn";
 
     this.currencyOption = this.UPC.currencyDomestic;
 
@@ -219,7 +221,8 @@ export class PaymentComponent {
       cardVerificationValue: this.cardVerificationValue,
       integrationMethod: this.integrationMethod,
       merchantID: this.merchantID,
-      successURL: this.successURL
+      successURL: this.successURL,
+      ipnURL: this.ipnURL
     };
 
     this.http.post<ResponseData>(this.baseUrl + 'api/client', requestData)

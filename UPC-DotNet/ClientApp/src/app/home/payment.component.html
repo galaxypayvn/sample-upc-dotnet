@@ -29,11 +29,17 @@
             </select>
           </div>
         </div>
+
         <div style="padding-bottom: 30px" class="row">
-          <div class="col-100 padding-left-15">
+          <div class="col-50 padding-left-15">
             <label>Result URL</label>
             <input class="form-control" type="text" id="successURL" name="successURL" placeholder="Result URL"
-                   [(ngModel)]="SuccessURL"/>
+                   [(ngModel)]="successURL"/>
+          </div>
+          <div class="col-50 padding-left-15">
+            <label>IPN URL</label>
+            <input class="form-control" type="text" id="ipnURL" name="ipnURL" placeholder="IPN URL"
+                   [(ngModel)]="ipnURL"/>
           </div>
         </div>
 

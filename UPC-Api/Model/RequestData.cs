@@ -20,4 +20,5 @@ public class RequestData
 
     public string? MerchantID { get; set; } = "1";
     public string? SuccessURL { get; set; } = default!;
+    public string? IpnURL { get; set; } = default!;
 }

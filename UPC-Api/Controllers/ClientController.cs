@@ -183,20 +183,22 @@ namespace UPC.Api.Controllers
                 order.OrderDescription = requestData.OrderDescription;
                 order.ExtraData = extraData!;
                 order.Language = requestData.Language;
-
-                string? successUrl = requestData.SuccessURL;
-                if (requestData.SuccessURL == _successUrl)
-                {
-                    successUrl = CallBackUrl(requestData.SuccessURL, requestData.MerchantID);
-                }
-
-                order.SuccessURL = string.IsNullOrEmpty(requestData.SuccessURL) == false
-                    ? successUrl
-                    : CallBackUrl(_successUrl, requestData.MerchantID);
+                
                 order.FailureURL = CallBackUrl(_failureUrl, requestData.MerchantID);
                 order.CancelURL = CallBackUrl(_cancelUrl, requestData.MerchantID);
-                order.IpnURL = CallBackUrl(_ipnUrl, requestData.MerchantID);
 
+                order.SuccessURL = requestData.SuccessURL;
+                if (string.IsNullOrEmpty(requestData.SuccessURL) || requestData.SuccessURL == _successUrl)
+                {
+                    order.SuccessURL = CallBackUrl(_successUrl, requestData.MerchantID);
+                }
+
+                order.IpnURL = requestData.IpnURL;
+                if (string.IsNullOrEmpty(requestData.IpnURL) || requestData.IpnURL == _ipnUrl)
+                {
+                    order.IpnURL = CallBackUrl(_ipnUrl, requestData.MerchantID);
+                }
+                
                 // Simple Checkout & Hosted Checkout
                 if (isPayWithOption == false)
                 {
