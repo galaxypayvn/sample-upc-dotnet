@@ -18,7 +18,7 @@ public class RequestData
     public string? CardExpireDate { get; set; } = default!;
     public string? CardVerificationValue { get; set; } = default!;
 
-    public string? MerchantID { get; set; } = "1";
+    public string MerchantID { get; set; } = "1";
     public string? SuccessURL { get; set; } = default!;
     public string? IpnURL { get; set; } = default!;
 }

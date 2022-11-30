@@ -10,10 +10,10 @@
       <div id="transaction">
         <h3 style="color: #5d63a8">Merchant Information</h3>
         <div class="row">
-          <div class="col-50 padding-left-15" *ngIf="listAPIKey.length > 0">
+          <div class="col-50 padding-left-15" *ngIf="merchants.length > 0">
             <label>Merchant Name</label>
             <select id='merchant' class="form-control" name='people'>
-              <option *ngFor="let item of listAPIKey" [value]="item.value">
+              <option *ngFor="let item of merchants" [value]="item.value">
                 {{item.text}}
               </option>
             </select>

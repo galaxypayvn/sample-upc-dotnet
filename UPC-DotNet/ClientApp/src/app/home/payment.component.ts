@@ -9,16 +9,12 @@ import {UPC} from './variables';
   templateUrl: './payment.component.html'
 })
 export class PaymentComponent {
-
   public UPC: UPC;
   public defaultPaymentMethod: string;
   public paymentMethod: string;
   public paymentSource: string;
   public paymentSourceOptions: any;
-
-  // configMerchant;
-  public merchant = null;
-  public listAPIKey = null;
+  public merchants = null;
 
   public lang = "vi";
   public orderNumber = Math.floor((Math.random() * 100000)).toString();
@@ -59,14 +55,9 @@ export class PaymentComponent {
     this.extra = JSON.stringify(this.UPC.paymentExtra, null, 4);
     this.successURL = baseUrl + "api/result";
     this.ipnURL = baseUrl + "api/ipn";
-
     this.currencyOption = this.UPC.currencyDomestic;
 
-    let listMerchant = (<HTMLSelectElement>document.getElementById("txtListMerchant"));
-    if (listMerchant){
-      this.merchant = listMerchant.value;
-      this.listAPIKey = JSON.parse(this.merchant);
-    }
+    this.getMerchants();
   }
 
   sortOptions = (a, b): number => { return a.value.order > b.value.order ? 1 : 0; }
@@ -258,6 +249,31 @@ export class PaymentComponent {
   public inCancel() {
     this.route.navigate(['/cancel']);
   }
+
+  public getMerchants(){
+    this.http.get<List<MerchantData>>(this.baseUrl + 'api/merchant')
+      .subscribe(
+        result => {
+          this.merchants = result;
+        },
+        result => {
+          console.error(result);
+          const messages = [];
+          for (const property in result.error.errors) {
+            messages.push(result.error.errors[property])
+          }
+
+          alert(result.statusText + ": " + messages);
+        });
+  }
+}
+
+interface List<T> {
+}
+
+interface MerchantData {
+  value: string;
+  text: string;
 }
 
 interface ResponseData {
