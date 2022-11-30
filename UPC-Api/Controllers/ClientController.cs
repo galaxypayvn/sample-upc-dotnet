@@ -196,10 +196,10 @@ namespace UPC.Api.Controllers
                     merchant.ApiKey = _configuration.GetValue<string>($"UPC:APIKey");
                 }
 
-                string failureUrl = ClientUrl + "/api/result";
-                string cancelUrl = ClientUrl + "/api/cancel";
-                string successUrl = ClientUrl + "/api/result";
-                string ipnUrl = ClientUrl + "/api/ipn";
+                string failureUrl = requestData.BaseUrl + "api/result";
+                string cancelUrl = requestData.BaseUrl + "api/cancel";
+                string successUrl = requestData.BaseUrl + "api/result";
+                string ipnUrl = requestData.BaseUrl + "api/ipn";
                 
                 bool isHostedMerchant = requestData.IntegrationMethod == "HOSTED";
                 bool isPayWithOption = requestData.IntegrationMethod == "OPTION";
@@ -490,7 +490,7 @@ namespace UPC.Api.Controllers
             {
                 HttpRequest request = HttpContext.Request;
                 string host = request.Host.ToString();
-                string protocol = request.Scheme;
+                string protocol = request.IsHttps ? "https" : "http";
 
                 return $"{protocol}://{host}";
             }

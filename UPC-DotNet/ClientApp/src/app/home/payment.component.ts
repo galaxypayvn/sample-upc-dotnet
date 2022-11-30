@@ -213,7 +213,8 @@ export class PaymentComponent {
       integrationMethod: this.integrationMethod,
       merchantID: this.merchantID,
       successURL: this.successURL,
-      ipnURL: this.ipnURL
+      ipnURL: this.ipnURL,
+      baseUrl: this.baseUrl
     };
 
     this.http.post<ResponseData>(this.baseUrl + 'api/client', requestData)
