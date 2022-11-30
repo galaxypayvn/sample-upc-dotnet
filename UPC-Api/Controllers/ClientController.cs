@@ -490,7 +490,7 @@ namespace UPC.Api.Controllers
             {
                 HttpRequest request = HttpContext.Request;
                 string host = request.Host.ToString();
-                string protocol = request.IsHttps ? "https" : "http";
+                string protocol = request.Scheme;
 
                 return $"{protocol}://{host}";
             }
