@@ -1,16 +1,16 @@
 {
   "Merchants": [
     {
-      "value": "3235",
-      "text": "3235 - Merchant Demo",
-      "apiKey": "ICB7IjMyMzUiOiJWaWV0IEpldCIsImNyZWF0ZWQiOiIyMDIyMDgxNjEwNDU0MCJ9.8269013cb5af84a2db3a98b81c17ba4f7c975e494eaf9c8fce616f6f540359da",
-      "salt": "GPAY"
-    },
-    {
       "value": "0001",
       "text": "0001 - Galaxy Pay",
-      "apiKey": "ICB7IjEiOiIxIiwiY3JlYXRlZCI6MjAyMjA4MTcxNjE0NTZ9.c4088df3ca18648ea0078dda0b879b32ba646730c2bf41b0255cc26d006f3e17",
-      "salt": "YIDSN9ATEH"
+      "apiKey": "ICB7IjEiOiIxIiwiY3JlYXRlZCI6MjAyMjA4MjIxODM4MTJ9.327ae8ff137a16216d22a7ca0d99cb1353d1fcf56d8aedb320e585a45bdda7aa",
+      "salt": "PDRF863WGD"
+    },
+    {
+      "value": "0002",
+      "text": "0002 - Galaxy Tech",
+      "apiKey": "ICB7IjIiOiIyIiwiY3JlYXRlZCI6MjAyMjExMzAxMDMxMDF9.913d34d6e0697ee2864dd66a8202efdd0abd5e68d6fe32a731081fab5c7b0f67",
+      "salt": "HVEDGLMWH0"
     }
   ]
 }
