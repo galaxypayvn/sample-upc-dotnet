@@ -257,17 +257,17 @@ export class UPC {
     },
     billing: {
       country: "vn",
-      state: "Hồ Chí Minh",
-      city: "Nhà Bè",
-      postalCode: "",
+      state: "",
+      city: "Hồ Chí Minh",
+      postalCode: "70000",
       streetNumber: "673",
       address01: "Đường Nguyễn Hữu Thọ",
       address02: ""
     },
     shipping: {
       country: "vn",
-      state: "Hồ Chí Minh",
-      city: "Nhà Bè",
+      state: "",
+      city: "Hồ Chí Minh",
       postalCode: "",
       streetNumber: "673",
       address01: "Đường Nguyễn Hữu Thọ",
