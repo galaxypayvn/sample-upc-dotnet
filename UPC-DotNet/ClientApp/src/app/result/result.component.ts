@@ -70,9 +70,11 @@ export class ResultComponent {
 
         if (result.orderAmount) {
           if (result.orderCurrency == "VND") {
-            this.orderAmount = this.currencyPipe.transform(result.orderAmount, 'VND', false).replace("VND", "") + " VND";
+            this.orderAmount = this.currencyPipe.transform(result.orderAmount, 'VND', false)
+              .replace("VND", "") + " VND";
           } else {
-            this.orderAmount = this.currencyPipe.transform(result.orderAmount, 'USD', false).replace("USD", "") + " USD";
+            this.orderAmount = this.currencyPipe.transform(result.orderAmount, 'USD', false)
+              .replace("USD", "") + " USD";
           }
         }
 

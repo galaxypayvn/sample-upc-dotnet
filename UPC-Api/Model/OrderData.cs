@@ -3,6 +3,7 @@ namespace UPC.Api.Model
 {
 	public class OrderData
 	{
+		public string ApiOperation { get; set; } = "PAY";
 		public string OrderID { get; set; }
 		public string OrderNumber { get; set; }
 		public decimal OrderAmount { get; set; }
@@ -10,14 +11,15 @@ namespace UPC.Api.Model
 		public string OrderDateTime { get; set; }
 		public string OrderDescription { get; set; }
 
-		public string CardType { get; set; }
-		public string Bank { get; set; }
-		public string OTP { get; set; } = "on";
-		public string Request { get; set; } = "purchase";
+		public string PaymentMethod { get; set; }
+		public string SourceType { get; set; }
 		public object ExtraData { get; set; }
 		public object Language { get; set; }
 		
 		public string? SuccessURL { get; set; }
+		public string? FailureURL { get; set; }
+		public string? CancelURL { get; set; }
+		public string? IpnURL { get; set; }
 		
 		#region Hosted Merchant Only
 		public string? CardNumber { get; set; } = default!;

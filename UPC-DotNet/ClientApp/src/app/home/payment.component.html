@@ -1,7 +1,5 @@
-﻿<h1 style="color: #fab82d">Checkout Page Demo</h1>
-<div>
-  This is a simple example of an Angular/C# component. (<a href="https://github.com/galaxypayvn/sample-upc-dotnet">Source
-  here!</a>) - v3.4.20221123.1722
+﻿<div>
+  <h1 style="color: #fab82d">Checkout Demo <span style="all: initial;"> v3.5.20221205.1500</span></h1>
 </div>
 
 <div class="container padding-top-10">
@@ -10,14 +8,17 @@
       <div id="transaction">
         <h3 style="color: #5d63a8">Merchant Information</h3>
         <div class="row">
-          <div class="col-50 padding-left-15" *ngIf="listAPIKey.length > 0">
+          <div class="col-50 padding-left-15" >
             <label>Merchant Name</label>
-            <select id='merchant' class="form-control" name='people'>
-              <option *ngFor="let item of listAPIKey" [value]="item.value">
+            <select id='merchant' class="form-control" name='people' *ngIf="isMasterMerchant">
+              <option *ngFor="let item of merchants" [value]="item.value">
                 {{item.text}}
               </option>
             </select>
+            <div class="form-control" *ngIf="isMasterMerchant == false">Demo</div>
           </div>
+        </div>
+        <div style="padding-bottom: 30px" class="row">
           <div class="col-50 padding-left-15">
             <label>Integration Methods</label>
             <select id="integrationMethods" class="form-control" name="integrationMethods" [(ngModel)]="integrationMethod"
@@ -27,13 +28,6 @@
                 {{item.value.text}}
               </option>
             </select>
-          </div>
-        </div>
-        <div style="padding-bottom: 30px" class="row">
-          <div class="col-100 padding-left-15">
-            <label>Result URL</label>
-            <input class="form-control" type="text" id="successURL" name="successURL" placeholder="Result URL"
-                   [(ngModel)]="SuccessURL"/>
           </div>
         </div>
 
@@ -86,6 +80,25 @@
     </div>
     <div class="col-sm-6">
       <div class="padding-left-20">
+        <h3 style="color: #5d63a8">Callback Information</h3>
+        <div style="padding-bottom: 30px" class="row">
+          <div class="col-50 padding-left-15">
+            <label>Result URL</label>
+            <input class="form-control" type="text" id="successURL" name="successURL" placeholder="Result URL"
+                   [(ngModel)]="successURL"/>
+          </div>
+          <div class="col-50 padding-left-15">
+            <label>Cancel URL</label>
+            <input class="form-control" type="text" id="cancelURL" name="cancelURL" placeholder="cancel URL"
+                   [(ngModel)]="cancelURL"/>
+          </div>
+          <div class="col-50 padding-left-15">
+            <label>IPN URL</label>
+            <input class="form-control" type="text" id="ipnURL" name="ipnURL" placeholder="IPN URL"
+                   [(ngModel)]="ipnURL"/>
+          </div>
+        </div>
+
         <h3 style="color: #5d63a8">Payment Information</h3>
         <div class="row" [hidden]="isPayWithOption">
           <div class="col-100 padding-left-15">
@@ -152,7 +165,7 @@
   <div class="row">
     <div class="col-sm-12">
       <div style="margin-top: -20px">
-        <label>Extra Data</label>
+        <label>Extra Data (JSON)</label>
         <textarea name="extraData" id='extraData' placeholder="Extra data" rows="10" [(ngModel)]="extra"
                   class="form-control"></textarea>
       </div>

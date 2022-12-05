@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text.Json;
 
@@ -12,7 +13,9 @@ using Microsoft.Extensions.Hosting;
 
 using Serilog;
 using Serilog.Debugging;
+using Serilog.Events;
 using Serilog.Exceptions;
+using Serilog.Filters;
 
 namespace UPC.DotNet;
 
@@ -39,20 +42,28 @@ public class Startup
         {
             configuration.RootPath = "ClientApp/dist";
         });
-
-        // string assemblyPath = AppContext.BaseDirectory + "UPC-Api.dll";
-        // Assembly assembly = Assembly.LoadFile(assemblyPath);
-        // AssemblyPart part = new(assembly);
-        // services.AddControllers().PartManager.ApplicationParts.Add(part);
-
+        
         SelfLog.Enable(Log.Error);
         LoggerConfiguration loggerConfiguration = new LoggerConfiguration()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .Enrich.FromLogContext()
             .Enrich.WithMachineName()
             .Enrich.WithEnvironmentName()
             .Enrich.WithExceptionDetails()
             .ReadFrom.Configuration(Configuration)
             .WriteTo.Console();
+        
+        List<string> excludes = new List<string>
+        {
+            "Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker",
+            "Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor",
+            "Microsoft.AspNetCore.Routing.EndpointMiddleware",
+            "Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware"
+        };
+        foreach (string source in excludes)
+        {
+            loggerConfiguration.Filter.ByExcluding(Matching.FromSource(source));
+        }
 
         Log.Logger = loggerConfiguration.CreateLogger();
     }

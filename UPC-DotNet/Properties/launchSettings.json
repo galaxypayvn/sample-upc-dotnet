@@ -5,6 +5,7 @@
       "launchBrowser": true,
       "applicationUrl": "http://localhost:9000",
       "environmentVariables": {
+        // Available Values: Local, Development, Staging, Production
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }

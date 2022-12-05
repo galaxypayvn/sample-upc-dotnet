@@ -1,3 +1,14 @@
+
+<style>
+  a:hover{
+    color: #fab82d !important;
+  }
+
+  a {
+    color: #1b6ec2 !important;
+  }
+</style>
+
 <header>
   <nav
     class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"
@@ -25,7 +36,16 @@
             [routerLinkActive]="['link-active']"
             [routerLinkActiveOptions]="{ exact: true }"
           >
-            <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
+            <a class="nav-link" href="https://github.com/galaxypayvn/sample-upc-dotnet" target="_blank">Source Repository</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav flex-grow">
+          <li
+            class="nav-item"
+            [routerLinkActive]="['link-active']"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <a class="nav-link" href="https://github.com/galaxypayvn/sample-upc-dotnet/blob/master/Documents/GalaxyPay-Payment-Gateway-Integration-Guide-v3.4.pdf" target="_blank">Documents</a>
           </li>
         </ul>
       </div>

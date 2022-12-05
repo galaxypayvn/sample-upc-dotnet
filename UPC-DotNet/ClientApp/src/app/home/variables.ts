@@ -21,10 +21,11 @@ export class UPC {
       { value: "SAIGONBANK", text: "SAIGON BANK/NGÂN HÀNG TMCP SÀI GÒN CÔNG THƯƠNG", isDefault: false, order: 2 },
     ],
     international: [
-      { value: "VISA", text: "VISA CARD", isDefault: true, order: 1 },
-      { value: "MASTER", text: "MASTER CARD", isDefault: false, order: 2 },
-      { value: "JCB", text: "JCB CARD", isDefault: false, order: 3 },
-      { value: "AMEX", text: "AMERICAN EXPRESS CARD", isDefault: false, order: 3 },
+      { value: "", text: "NONE SPECIFIED", isDefault: true, order: 1 },
+      { value: "VISA", text: "VISA CARD", isDefault: false, order: 2 },
+      { value: "MASTER", text: "MASTER CARD", isDefault: false, order: 3 },
+      { value: "JCB", text: "JCB CARD", isDefault: false, order: 4 },
+      { value: "AMEX", text: "AMERICAN EXPRESS CARD", isDefault: false, order: 5 }
     ],
     wallet: [
       { value: "GPAY", text: "GPAY eWALLET", isDefault: true, order: 1 },

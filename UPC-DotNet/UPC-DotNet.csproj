@@ -13,6 +13,7 @@
         <RootNamespace>UPC.DotNet</RootNamespace>
         <Authors>Lunar</Authors>
         <AssemblyName>UPC.DotNet</AssemblyName>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(RunConfiguration)' == 'UPC' " />
@@ -33,6 +34,7 @@
         <Content Remove="$(SpaRoot)**" />
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+        <None Include="Assets\config.json" />
     </ItemGroup>
 
     <ItemGroup>
@@ -50,6 +52,7 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Pages\Error.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\_ViewImports.cshtml" />
+      <_ContentIncludedByDefault Remove="ClientApp\src\config\config.json" />
     </ItemGroup>
 
     <ItemGroup>
