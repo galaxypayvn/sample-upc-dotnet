@@ -49,7 +49,7 @@ export class PaymentComponent {
               private currencyPipe: CurrencyPipe)
   {
     this.UPC = new UPC();
-    this.defaultPaymentMethod = this.UPC.paymentMethods.ATM.value;
+    this.defaultPaymentMethod = this.UPC.paymentMethods.Domestic.value;
 
     this.paymentMethod = this.defaultPaymentMethod;
     this.paymentSourceOptions = this.UPC.paymentProviders[this.paymentMethod];
@@ -92,11 +92,12 @@ export class PaymentComponent {
     this.isDisableHosted = (
       provider === Providers.Wallet.value ||
       provider === Providers.Hub.value ||
+      provider === Providers.QRPay.value ||
       method !== Methods.Hosted.value
     );
 
     switch (provider) {
-      case Providers.ATM.value:
+      case Providers.Domestic.value:
         this.paymentSourceOptions = this.UPC.paymentProviders[provider];
         this.paymentSource = this.paymentSourceOptions[0].value;
         this.isCVV = true;
@@ -107,7 +108,7 @@ export class PaymentComponent {
         this.paymentSourceOptions = this.UPC.paymentProviders[provider];
         this.paymentSource = this.paymentSourceOptions[0].value;
         this.isCVV = !(this.isDisableHosted === false);
-        this.currencyOption = this.UPC.currencyMPGs;
+        this.currencyOption = this.UPC.currencyInternational;
         break;
 
       case Providers.Wallet.value:
@@ -119,10 +120,19 @@ export class PaymentComponent {
       case Providers.Hub.value:
         this.paymentSourceOptions = this.UPC.paymentProviders[provider];
         this.paymentSource = this.paymentSourceOptions[0].value;
-        this.currencyOption = this.UPC.currency2C2P;
+        this.currencyOption = this.paymentSource == this.UPC.Providers.Hub2C2P
+          ? this.UPC.currency2C2P
+          : this.UPC.currencyPOLI;
+        break;
+
+      case Providers.QRPay.value:
+        this.paymentSourceOptions = this.UPC.paymentProviders[provider];
+        this.paymentSource = this.paymentSourceOptions[0].value;
+        this.currencyOption =  this.UPC.currencyDomestic;
         break;
     }
 
+    this.orderCurrency = this.currencyOption[0].value;
     this.setCardInfo();
   }
 
@@ -144,7 +154,7 @@ export class PaymentComponent {
       case Methods.Option.value:
         this.isDisableHosted = true;
         this.isPayWithOption = true;
-        this.currencyOption = this.UPC.currencyMPGs;
+        this.currencyOption = this.UPC.currencyInternational;
         break;
 
       default:
@@ -157,6 +167,18 @@ export class PaymentComponent {
   }
 
   filterPaymentSource() {
+    switch (this.paymentSource)
+    {
+      case this.UPC.Providers.Hub2C2P:
+        this.currencyOption = this.UPC.currency2C2P;
+        break;
+
+      case this.UPC.Providers.HubPOLI:
+        this.currencyOption = this.UPC.currencyPOLI;
+        this.orderCurrency = this.UPC.currencyPOLI[0].value;
+        break;
+    }
+
     this.setCardInfo();
   }
 
