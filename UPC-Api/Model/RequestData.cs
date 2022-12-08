@@ -1,4 +1,5 @@
 ﻿#pragma warning disable CS8618
+
 namespace UPC.Api.Model;
 
 public class RequestData
@@ -13,14 +14,15 @@ public class RequestData
     public string ExtraData { get; set; }
 
     public string IntegrationMethod { get; set; }
-    public string? CardNumber { get; set; } = default!;
-    public string? CardHolderName { get; set; } = default!;
-    public string? CardExpireDate { get; set; } = default!;
-    public string? CardVerificationValue { get; set; } = default!;
+    public string? CardNumber { get; set; }
+    public string? CardHolderName { get; set; }
+    public string? CardExpireDate { get; set; }
+    public string? CardVerificationValue { get; set; }
 
-    public string MerchantID { get; set; } = "1";
-    public string? SuccessURL { get; set; } = default!;
-    public string? IpnURL { get; set; } = default!;
+    public string MerchantID { get; set; }
+    public string? SuccessURL { get; set; }
+    public string? CancelURL { get; set; }
+    public string? IpnURL { get; set; }
     
     public string BaseUrl { get; set; }
 }

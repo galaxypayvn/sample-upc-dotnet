@@ -1,6 +1,15 @@
 export class UPC {
   constructor() {};
 
+  public Providers = {
+    Hub2C2P: "2C2P",
+    HubPOLI: "POLI",
+    MOMO: "MOMO",
+    ZALOPAY: "ZALOPAY",
+    GPAY: "GPAY",
+    QRPAY: "QRPAY"
+  }
+
   // Integration Methods
   public integrationMethods = {
     Simple: { value: "SIMPLE", text: "Merchant Checkout", isDefault: true, order: 1 },
@@ -9,22 +18,24 @@ export class UPC {
   }
 
   public paymentMethods = {
-    ATM:            { value: "atm", text: "ATM CARD (VIETNAM)", isDefault: true, order: 1 },
-    International:  { value: "international", text: "INTERNATIONAL CARD (VISA, MASTER CARD, JCB,...)", isDefault: false, order: 2 },
+    Domestic:       { value: "domestic", text: "ATM CARD (VIETNAM)", isDefault: true, order: 1 },
+    International:  { value: "international", text: "INTERNATIONAL CARD (VISA, MASTER CARD, JCB, AMEX)", isDefault: false, order: 2 },
     Wallet:         { value: "wallet", text: "eWALLET", isDefault: false, order: 3 },
     Hub:            { value: "hub", text: "PAYMENT HUBS", isDefault: false, order: 4 },
+    QRPay:          { value: "qrpay", text: "QR PAYMENT", isDefault: false, order: 5 },
   }
 
   public paymentProviders = {
-    atm: [
+    domestic: [
       { value: "", text: "VIETNAM LOCAL BANKS", isDefault: true, order: 1 },
       { value: "SAIGONBANK", text: "SAIGON BANK/NGÂN HÀNG TMCP SÀI GÒN CÔNG THƯƠNG", isDefault: false, order: 2 },
     ],
     international: [
-      { value: "VISA", text: "VISA CARD", isDefault: true, order: 1 },
-      { value: "MASTER", text: "MASTER CARD", isDefault: false, order: 2 },
-      { value: "JCB", text: "JCB CARD", isDefault: false, order: 3 },
-      { value: "AMEX", text: "AMERICAN EXPRESS CARD", isDefault: false, order: 3 },
+      { value: "", text: "NONE SPECIFIED", isDefault: true, order: 1 },
+      { value: "VISA", text: "VISA CARD", isDefault: false, order: 2 },
+      { value: "MASTER", text: "MASTER CARD", isDefault: false, order: 3 },
+      { value: "JCB", text: "JCB CARD", isDefault: false, order: 4 },
+      { value: "AMEX", text: "AMERICAN EXPRESS CARD", isDefault: false, order: 5 }
     ],
     wallet: [
       { value: "GPAY", text: "GPAY eWALLET", isDefault: true, order: 1 },
@@ -33,6 +44,10 @@ export class UPC {
     ],
     hub: [
       { value: "2C2P", text: "2C2P HUB", isDefault: true, order: 1 },
+      { value: "POLI", text: "POLi HUB", isDefault: false, order: 2 },
+    ],
+    qrpay: [
+      { value: "QRPAY", text: "QR PAYMENT", isDefault: true, order: 1 }
     ]
   }
 
@@ -44,8 +59,8 @@ export class UPC {
     }
   ]
 
-  // currencyOption MPGS
-  public currencyMPGs = [
+  // currencyOption MPGS/CYBS
+  public currencyInternational = [
     {
       value: "VND",
       text: "VND",
@@ -172,6 +187,13 @@ export class UPC {
     }
   ]
 
+  public currencyPOLI = [
+    {
+      value: "AUD",
+      text: "AUD",
+    }
+  ]
+
   public paymentExtra = {
     customer: {
       firstName: "Jacob",
@@ -256,17 +278,17 @@ export class UPC {
     },
     billing: {
       country: "vn",
-      state: "Hồ Chí Minh",
-      city: "Nhà Bè",
-      postalCode: "",
+      state: "",
+      city: "Hồ Chí Minh",
+      postalCode: "70000",
       streetNumber: "673",
       address01: "Đường Nguyễn Hữu Thọ",
       address02: ""
     },
     shipping: {
       country: "vn",
-      state: "Hồ Chí Minh",
-      city: "Nhà Bè",
+      state: "",
+      city: "Hồ Chí Minh",
       postalCode: "",
       streetNumber: "673",
       address01: "Đường Nguyễn Hữu Thọ",

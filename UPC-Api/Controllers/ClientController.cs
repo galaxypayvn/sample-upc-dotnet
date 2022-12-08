@@ -22,9 +22,11 @@ namespace UPC.Api.Controllers
     [Route("api")]
     public class ClientController : ControllerBase
     {
-        private readonly string _checksumText = "{\"checksum\":\"failure\"}";
+        private const string ChecksumText = "{\"signature\":\"failure\"}";
         private readonly ILogger<ClientController> _logger;
         private readonly IConfiguration _configuration;
+        
+        // ReSharper disable once NotAccessedField.Local
         private static Timer _logTimer;
 
         private JsonSerializerOptions JsonOptions { get; } = new()
@@ -36,31 +38,33 @@ namespace UPC.Api.Controllers
         };
 
         private static readonly ConcurrentDictionary<string, TransactionData> Transactions = new();
-        private static readonly ConcurrentDictionary<string, Merchant> Merchants = new();
-
+        private static readonly ConcurrentDictionary<string, MasterMerchantData.MerchantData> Merchants = new();
+        private static readonly bool IsMasterMerchant;
+        
         static ClientController()
         {
             const int interval = 1000 * 60 * 60 * 1;  // 1 hours
             _logTimer = new Timer(ProcessOnSchedule, null, interval, interval);
             
-            // Read file config
+            // Master Merchant Only
             string folderPath = AppContext.BaseDirectory + "/Assets/config.json";
             StreamReader reader = new StreamReader(folderPath);
             string streamData = reader.ReadToEnd();
-            
-            // Add merchants to cache
-            ConfigData? configData = JsonSerializer.Deserialize<ConfigData>(streamData);
-            if (configData != null)
+            MasterMerchantData? master = JsonSerializer.Deserialize<MasterMerchantData>(streamData);
+            if (master != null &&
+                master.Merchants.Count > 0)
             {
-                List<Merchant> merchants = configData.Merchants;
-                foreach (Merchant merchant in merchants)
+                IsMasterMerchant = true;
+                foreach (MasterMerchantData.MerchantData merchant in master.Merchants)
                 {
                     Merchants.TryAdd(merchant.MerchantID, merchant);
                 }
             }
         }
         
-        // Remove expired transactions from Cache
+        /// <summary>
+        ///     Remove expired transactions from Cache
+        /// </summary>
         private static void ProcessOnSchedule(object? state)
         {
             long currentDateTime = long.Parse(DateTime.Now.ToString("yyyyMMddHHmmss"));
@@ -84,15 +88,9 @@ namespace UPC.Api.Controllers
         
         [HttpGet]
         [Route("merchant")]
-        public List<Merchant> GetMerchant()
+        public List<MasterMerchantData.MerchantData> GetMerchant()
         {
-            List<Merchant> merchants = new List<Merchant>();
-            foreach (Merchant merchant in Merchants.Values)
-            {
-                merchants.Add(merchant);
-            }
-
-            return merchants;
+            return Merchants.Values.ToList();
         }
 
         [HttpPost]
@@ -188,24 +186,23 @@ namespace UPC.Api.Controllers
             
             try
             {
-                Merchants.TryGetValue(requestData.MerchantID, out Merchant? merchant);
-                if (merchant == null)
+                MasterMerchantData.MerchantData merchant;
+                if (IsMasterMerchant)
                 {
-                    merchant = new Merchant();
-                    merchant.Salt = _configuration.GetValue<string>($"UPC:Salt");
-                    merchant.ApiKey = _configuration.GetValue<string>($"UPC:APIKey");
+                    Merchants.TryGetValue(requestData.MerchantID, out merchant!);
                 }
-
-                string failureUrl = requestData.BaseUrl + "api/result";
-                string cancelUrl = requestData.BaseUrl + "api/cancel";
-                string successUrl = requestData.BaseUrl + "api/result";
-                string ipnUrl = requestData.BaseUrl + "api/ipn";
+                else
+                {
+                    merchant = new MasterMerchantData.MerchantData();
+                    merchant.MerchantID = "Demo";
+                    merchant.ApiKey = _configuration.GetValue<string>($"UPC:APIKey");
+                    merchant.Salt = _configuration.GetValue<string>($"UPC:Salt");
+                }
                 
                 bool isHostedMerchant = requestData.IntegrationMethod == "HOSTED";
                 bool isPayWithOption = requestData.IntegrationMethod == "OPTION";
                 string route = isPayWithOption ? "payWithOption" : "pay";
                 string url = _configuration.GetValue<string>("UPC:EndPoint") + "/" + route;
-                string apiKey = merchant.ApiKey;
 
                 OrderData order = new();
                 order.OrderID = Guid.NewGuid().ToString();
@@ -217,20 +214,10 @@ namespace UPC.Api.Controllers
                 order.ExtraData = extraData!;
                 order.Language = requestData.Language;
 
-                order.FailureURL = CallBackUrl(failureUrl, requestData.MerchantID);
-                order.CancelURL = CallBackUrl(cancelUrl, requestData.MerchantID);
-                order.SuccessURL = requestData.SuccessURL;
-                order.IpnURL = requestData.IpnURL;
-                
-                if (string.IsNullOrEmpty(requestData.SuccessURL) || requestData.SuccessURL == successUrl)
-                {
-                    order.SuccessURL = CallBackUrl(successUrl, requestData.MerchantID);
-                }
-                
-                if (string.IsNullOrEmpty(requestData.IpnURL) || requestData.IpnURL == ipnUrl)
-                {
-                    order.IpnURL = CallBackUrl(ipnUrl, requestData.MerchantID);
-                }
+                order.SuccessURL = BuildURL(requestData.SuccessURL, requestData.MerchantID);
+                order.FailureURL = BuildURL(requestData.SuccessURL, requestData.MerchantID);
+                order.CancelURL =  BuildURL(requestData.CancelURL, requestData.MerchantID);
+                order.IpnURL =  BuildURL(requestData.IpnURL, requestData.MerchantID);
                 
                 // Simple Checkout & Hosted Checkout
                 if (isPayWithOption == false)
@@ -261,7 +248,7 @@ namespace UPC.Api.Controllers
                 // Request to API /transaction
                 string sha256Salt = merchant.Salt;
                 string signature = Hash(content, sha256Salt); // Hash 256
-                string response = ServiceBase.Post(url, content, apiKey, signature);
+                string response = ServiceBase.Post(url, content, merchant.ApiKey, signature);
 
                 // Response
                 _logger.LogInformation("Response: " + response);
@@ -297,8 +284,8 @@ namespace UPC.Api.Controllers
 
         private RedirectResult ProcessCancel(CallbackData model, string merchant)
         {
-            bool checkSum = CheckSumData(model, merchant);
-            _logger.LogInformation("Cancel checksum data: " + checkSum);
+            bool isMatch = VerifySignature(model, merchant);
+            _logger.LogInformation("Cancel verify signature data: " + isMatch);
 
             string response = FromBase64String(model.Data);
             _logger.LogInformation("Cancel URL Callback: " + response);
@@ -316,7 +303,7 @@ namespace UPC.Api.Controllers
             TransactionData transaction = new();
             transaction.TransactionID = order.TransactionID;
             transaction.RawContent = content;
-            transaction.ResponseContent = checkSum ? response : _checksumText;
+            transaction.ResponseContent = isMatch ? response : ChecksumText;
             UpdateResultToCache(transaction);
             
             string url = $"{ClientUrl}/router?method=cancel&transactionID=" + order.TransactionID;
@@ -340,8 +327,8 @@ namespace UPC.Api.Controllers
 
         private RedirectResult ProcessResult(CallbackData model, string merchant)
         {
-            bool checkSum = CheckSumData(model, merchant);
-            _logger.LogInformation("Result checksum data: " + checkSum);
+            bool isMatch = VerifySignature(model, merchant);
+            _logger.LogInformation("Result verify signature data: " + isMatch);
 
             string response = FromBase64String(model.Data);
             _logger.LogInformation("Result URL Callback: " + response);
@@ -361,7 +348,7 @@ namespace UPC.Api.Controllers
             transaction.ResultResponseTime = GetDateString(serviceResponse?.ResponseDateTime);
             transaction.ResponseCode = serviceResponse?.ResponseCode;
             transaction.RawContent = content;
-            transaction.ResponseContent = checkSum ? response : _checksumText;
+            transaction.ResponseContent = isMatch ? response : ChecksumText;
             transaction.OrderNumber = order.OrderNumber;
             transaction.OrderAmount = order.OrderAmount.ToString(CultureInfo.InvariantCulture);
             transaction.OrderCurrency = order.OrderCurrency;
@@ -376,8 +363,8 @@ namespace UPC.Api.Controllers
         [Route("ipn/{merchant}")]
         public void OnIPNCallback([FromBody] CallbackData model, string merchant)
         {
-            bool checkSum = CheckSumData(model, merchant);
-            _logger.LogInformation("IPN checksum data: " + checkSum);
+            bool isMatch = VerifySignature(model, merchant);
+            _logger.LogInformation("IPN verify signature data: " + isMatch);
 
             string response = FromBase64String(model.Data);
             _logger.LogInformation("IPN URL PostBack: " + response);
@@ -397,33 +384,31 @@ namespace UPC.Api.Controllers
             transaction.IPNResponseTime = GetDateString(serviceResponse?.ResponseDateTime);
             transaction.ResponseCode = serviceResponse?.ResponseCode;
             transaction.IPNRawContent = content;
-            transaction.IPNResponseContent = checkSum ? response : _checksumText;
+            transaction.IPNResponseContent = isMatch ? response : ChecksumText;
             
             UpdateIpnToCache(transaction);
         }
 
-        private bool CheckSumData(CallbackData? model, string merchantId)
+        private bool VerifySignature(CallbackData? model, string merchantId)
         {
             if (model == null)
             {
                 return false;
             }
-            
-            Merchants.TryGetValue(merchantId, out Merchant? merchant);
-            if (merchant == null)
-            {
-                merchant = new Merchant();
-                merchant.Salt = _configuration.GetValue<string>($"UPC:Salt");
-            }
-            
-            string signature = Hash(model.Data, merchant.Salt);
-            
-            if (signature == model.Signature)
-            {
-                return true;
-            }
 
-            return false;
+            string salt;
+            if (IsMasterMerchant)
+            {
+                Merchants.TryGetValue(merchantId, out MasterMerchantData.MerchantData? merchant);
+                salt = merchant?.Salt + string.Empty;
+            }
+            else
+            {
+                salt = _configuration.GetValue<string>("UPC:Salt");
+            }
+            
+            string signature = Hash(model.Data, salt);
+            return signature == model.Signature;
         }
 
         private static string GetDateString(string? value)
@@ -496,14 +481,19 @@ namespace UPC.Api.Controllers
             }
         }
 
-        private string? CallBackUrl(string? url, string? merchant)
+        private string? BuildURL(string? url, string? merchant)
         {
-            if (string.IsNullOrWhiteSpace(merchant))
+            if (url == null)
             {
-                merchant = "null";
+                return null;
             }
             
-            return url + "/" + merchant;
+            if (string.IsNullOrWhiteSpace(merchant))
+            {
+                merchant = "Demo";
+            }
+
+            return $"{url}/{merchant}";
         }
     }
 }
