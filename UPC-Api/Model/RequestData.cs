@@ -4,6 +4,7 @@ namespace UPC.Api.Model;
 
 public class RequestData
 {
+    public string ApiOperation { get; set; }
     public string BillNumber { get; set; }
     public string Language { get; set; }
     public string OrderAmount { get; set; }
@@ -25,4 +26,6 @@ public class RequestData
     public string? IpnURL { get; set; }
     
     public string BaseUrl { get; set; }
+    public string? Token { get; set; }
+    public string? SourceOfFund { get; set; }
 }

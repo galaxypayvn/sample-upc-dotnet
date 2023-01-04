@@ -29,6 +29,15 @@
               </option>
             </select>
           </div>
+          <div class="col-50 padding-left-15">
+            <label>API Operation Methods</label>
+            <select id="apiOperationMethod" class="form-control" name="apiOperationMethod" [(ngModel)]="apiOperationMethod">
+              <option *ngFor="let item of UPC.apiOperationMethod | keyvalue:sortOptions" [value]="item.value.value"
+                      [selected]="item.value.isDefault">
+                {{item.value.text}}
+              </option>
+            </select>
+          </div>
         </div>
 
         <h3 style="color: #5d63a8">Order Information</h3>
@@ -126,27 +135,49 @@
 
         <div [hidden]="isDisableHosted">
           <div class="row">
-            <div class="col-50 padding-left-15">
-              <label>Card Number <span style="color:red;">*</span></label>
-              <input class="form-control" type="text" id="cardNumber" name="cardNumber" [(ngModel)]="cardNumber"/>
-            </div>
-            <div class="col-50 padding-left-15">
-              <label>Card Holder Name <span style="color:red;">*</span></label>
-              <input class="form-control" type="text" id="cardHolderName" name="cardHolderName"
-                     [(ngModel)]="cardHolderName"/>
+            <div class="col-100 padding-left-15">
+              <label>Source Of fund <span style="color:red;">*</span></label>
+              <select id="sourceOfFund" class="form-control" name="sourceOfFund" [(ngModel)]="sourceOfFund"
+                      (change)="filterSourceOfFund($event.target)">
+                <option *ngFor="let item of UPC.sourceOfFund | keyvalue:sortOptions" [value]="item.value.value"
+                        [selected]="item.value.isDefault">
+                  {{item.value.text}}
+                </option>
+              </select>
             </div>
           </div>
 
-          <div class="row">
-            <div class="col-50 padding-left-15">
-              <label>{{labelCardDate}} <span style="color:red;">*</span></label>
-              <input class="form-control" type="text" id="cardExpireDate" name="cardExpireDate"
-                     [(ngModel)]="cardExpireDate"/>
+          <div class="row" [hidden]="isDisableToken">
+            <div class="col-100 padding-left-15">
+              <label>Token <span style="color:red;">*</span></label>
+              <input class="form-control" type="text" id="token" name="token" [(ngModel)]="token"/>
             </div>
-            <div class="col-50 padding-left-15" [hidden]="isCVV">
-              <label>CVV <span style="color:red;">*</span></label>
-              <input class="form-control" type="text" id="cardVerificationValue" name="cardVerificationValue"
-                     [(ngModel)]="cardVerificationValue"/>
+          </div>
+
+          <div [hidden]="isCardInfo">
+            <div class="row">
+              <div class="col-50 padding-left-15">
+                <label>Card Number <span style="color:red;">*</span></label>
+                <input class="form-control" type="text" id="cardNumber" name="cardNumber" [(ngModel)]="cardNumber"/>
+              </div>
+              <div class="col-50 padding-left-15">
+                <label>Card Holder Name <span style="color:red;">*</span></label>
+                <input class="form-control" type="text" id="cardHolderName" name="cardHolderName"
+                       [(ngModel)]="cardHolderName"/>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-50 padding-left-15">
+                <label>{{labelCardDate}} <span style="color:red;">*</span></label>
+                <input class="form-control" type="text" id="cardExpireDate" name="cardExpireDate"
+                       [(ngModel)]="cardExpireDate"/>
+              </div>
+              <div class="col-50 padding-left-15" [hidden]="isCVV">
+                <label>CVV <span style="color:red;">*</span></label>
+                <input class="form-control" type="text" id="cardVerificationValue" name="cardVerificationValue"
+                       [(ngModel)]="cardVerificationValue"/>
+              </div>
             </div>
           </div>
         </div>

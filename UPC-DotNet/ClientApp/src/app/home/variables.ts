@@ -10,6 +10,16 @@ export class UPC {
     QRPAY: "QRPAY"
   }
 
+  public apiOperationMethod = {
+    pay: { value: "PAY", text: "Pay", isDefault: true, order: 1 },
+    payWithCreateToken: { value: "PAY_WITH_CREATE_TOKEN", text: "Pay with create token", isDefault: false, order: 2 },
+  }
+
+  public sourceOfFund = {
+    card: { value: "CARD", text: "Card", isDefault: true, order: 1 },
+    token: { value: "TOKEN", text: "Token", isDefault: false, order: 2 },
+  }
+
   // Integration Methods
   public integrationMethods = {
     Simple: { value: "SIMPLE", text: "Merchant Checkout", isDefault: true, order: 1 },
