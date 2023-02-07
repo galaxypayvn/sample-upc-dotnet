@@ -74,7 +74,7 @@ export class ResultComponent {
               .replace("VND", "") + " VND";
           } else {
             this.orderAmount = this.currencyPipe.transform(result.orderAmount, 'USD', false)
-              .replace("USD", "") + " USD";
+              .replace("USD", "") + " " + this.orderCurrency;
           }
         }
 

@@ -205,6 +205,7 @@ namespace UPC.Api.Controllers
                 string url = _configuration.GetValue<string>("UPC:EndPoint") + "/" + route;
 
                 OrderData order = new();
+                order.ApiOperation = requestData.ApiOperation;
                 order.OrderID = Guid.NewGuid().ToString();
                 order.OrderNumber = requestData.BillNumber;
                 order.OrderDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
@@ -228,6 +229,7 @@ namespace UPC.Api.Controllers
                 
                 // Hosted Checkout
                 if (isHostedMerchant &&
+                    requestData.SourceOfFund == "CARD" &&
                     requestData.PaymentMethod.ToUpper() != "WALLET" &&
                     requestData.PaymentMethod.ToUpper() != "HUB")
                 {
@@ -235,6 +237,15 @@ namespace UPC.Api.Controllers
                     order.CardHolderName = requestData.CardHolderName;
                     order.CardExpireDate = requestData.CardExpireDate;
                     order.CardVerificationValue = requestData.CardVerificationValue;
+                }
+                
+                // Pay with token
+                if (isHostedMerchant &&
+                    requestData.SourceOfFund == "TOKEN" &&
+                    string.IsNullOrEmpty(requestData.Token) == false)
+                {
+                    order.SourceOfFund = requestData.SourceOfFund;
+                    order.Token = requestData.Token;
                 }
 
                 ServiceRequestData<OrderData> request = new();

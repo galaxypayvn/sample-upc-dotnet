@@ -1,5 +1,33 @@
 {
   "Merchants": [
+    {
+      "value": "3235",
+      "text": "3235 - Merchant Demo",
+      "apiKey": "ICB7IjMyMzUiOiJWaWV0IEpldCIsImNyZWF0ZWQiOiIyMDIyMDgxNjEwNDU0MCJ9.8269013cb5af84a2db3a98b81c17ba4f7c975e494eaf9c8fce616f6f540359da",
+      "salt": "GPAY",
+      "order": 1
+    },
+    {
+      "value": "3258",
+      "text": "3258 - VIETJET WEBSITE",
+      "apiKey": "eyJhbGdvcml0aG0iOiJTSEEyNTYifQ==.eyJtZXJjaGFudElEIjoiMzI1OCIsIm1lcmNoYW50TmFtZSI6IlZJRVRKRVQgQUlSIFNFQ1VSRSBQQUdFIiwiZGF0ZUNyZWF0ZSI6IjEwLzA2LzIwMjIgMTI6MDA6MDcifQ==.50cee684c26e5752d4aa642dd89f29bf0f73cc32f7a151c1ab98d7d311730023",
+      "salt": "GO@2021",
+      "order": 2
+    },
+    {
+      "value": "3261",
+      "text": "3261 - VIETJET MOBILE",
+      "apiKey": "eyJhbGdvcml0aG0iOiJTSEEyNTYifQ==.eyJtZXJjaGFudElEIjoiMzI2MSIsIm1lcmNoYW50TmFtZSI6IlZJRVRKRVQgQUlSIEFQUCIsImRhdGVDcmVhdGUiOiIxMC8wNi8yMDIyIDEyOjI2OjIxIn0=.c02d4048e63a55b2dc8daa0a215ffa6d68c42718d1f277f23622ebe69d4ed7be",
+      "salt": "GO@2021",
+      "order": 3
+    },
+    {
+      "value": "0001",
+      "text": "0001 - Galaxy Pay",
+      "apiKey": "ICB7IjEiOiIxIiwiY3JlYXRlZCI6MjAyMjA4MTcxNjE0NTZ9.c4088df3ca18648ea0078dda0b879b32ba646730c2bf41b0255cc26d006f3e17",
+      "salt": "YIDSN9ATEH",
+      "order": 4
+    }
   ]
 }
 

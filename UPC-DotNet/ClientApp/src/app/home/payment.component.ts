@@ -24,12 +24,15 @@ export class PaymentComponent {
   public orderDescription = "Secure Page Demo";
   public extra: string;
   public currencyOption: any;
+  public token: string;
   public cardNumber = "9704000000000018";
   public cardHolderName = "Nguyen Van A";
   public cardExpireDate = "03/07";
   public cardVerificationValue = "100";
   public labelCardDate = "Card Issue Date";
   public integrationMethod = "SIMPLE";
+  public apiOperationMethod = "PAY";
+  public sourceOfFund = "CARD" ;
   public merchantID = "";
   public successURL: string;
   public cancelURL: string;
@@ -38,6 +41,8 @@ export class PaymentComponent {
   public resultData: ResponseData;
   public isPayWithOption = false;
   public isDisableHosted = true;
+  public isDisableToken = true;
+  public isCardInfo = false;
   public isCVV = true;
   public loading: boolean = false;
   public isDisabledButton: boolean = false;
@@ -132,6 +137,16 @@ export class PaymentComponent {
         break;
     }
 
+    // Token with GPAY
+    if(provider === Providers.Wallet.value &&
+      this.paymentSource === this.UPC.Providers.GPAY &&
+      this.integrationMethod === this.UPC.integrationMethods.Hosted.value) {
+      this.sourceOfFund = this.UPC.sourceOfFund.token.value;
+      this.isDisableHosted = false;
+      this.isDisableToken = false;
+      this.isCardInfo = true;
+    }
+
     this.orderCurrency = this.currencyOption[0].value;
     this.setCardInfo();
   }
@@ -148,6 +163,15 @@ export class PaymentComponent {
         this.isDisableHosted = (paymentMethod === Providers.Wallet.value || paymentMethod === Providers.Hub.value);
         this.isCVV = !(this.isDisableHosted == false && paymentMethod === Providers.International.value);
         this.isPayWithOption = false;
+
+        // pay with token GPay
+        if(this.paymentMethod === Providers.Wallet.value &&
+          this.paymentSource === this.UPC.Providers.GPAY) {
+          this.sourceOfFund = this.UPC.sourceOfFund.token.value;
+          this.isDisableHosted = false;
+          this.isDisableToken = false;
+          this.isCardInfo = true;
+        }
         break;
 
       // OPTION
@@ -176,6 +200,42 @@ export class PaymentComponent {
       case this.UPC.Providers.HubPOLI:
         this.currencyOption = this.UPC.currencyPOLI;
         this.orderCurrency = this.UPC.currencyPOLI[0].value;
+        break;
+
+      case this.UPC.Providers.GPAY:
+        this.isDisableHosted = false;
+        this.isDisableToken = false;
+        this.isCardInfo = true;
+        break;
+    }
+
+    // Wallet and (not GPay)
+    if(this.paymentMethod === this.UPC.paymentMethods.Wallet.value &&
+      this.paymentSource !== this.UPC.Providers.GPAY) {
+      this.isDisableHosted = true;
+    }
+
+    this.setCardInfo();
+  }
+
+  filterSourceOfFund(element: any) {
+    switch (this.sourceOfFund)
+    {
+      case this.UPC.sourceOfFund.card.value:
+        this.isDisableToken = true;
+        this.isCardInfo = false;
+
+        // Token with GPAY
+        if(this.paymentMethod === this.UPC.paymentMethods.Wallet.value &&
+          this.paymentSource === this.UPC.Providers.GPAY &&
+          this.integrationMethod === this.UPC.integrationMethods.Hosted.value) {
+          this.isCardInfo = true;
+        }
+        break;
+
+      case this.UPC.sourceOfFund.token.value:
+        this.isDisableToken = false;
+        this.isCardInfo = true;
         break;
     }
 
@@ -216,6 +276,7 @@ export class PaymentComponent {
   public inProcess() {
     this.loading = true;
     this.isDisabledButton = true;
+    let sourceOfFund = this.paymentSource;
 
     let elementMerchant = (<HTMLSelectElement>document.getElementById("merchant"));
     if (elementMerchant != null)
@@ -237,11 +298,14 @@ export class PaymentComponent {
       cardExpireDate: this.cardExpireDate,
       cardVerificationValue: this.cardVerificationValue,
       integrationMethod: this.integrationMethod,
+      apiOperation: this.apiOperationMethod,
       merchantID: this.merchantID,
       successURL: this.successURL,
       cancelURL: this.cancelURL,
       ipnURL: this.ipnURL,
-      baseUrl: this.baseUrl
+      baseUrl: this.baseUrl,
+      token: this.token,
+      sourceOfFund: this.sourceOfFund
     };
 
     this.http.post<ResponseData>(this.baseUrl + 'api/client', requestData)
@@ -279,6 +343,11 @@ export class PaymentComponent {
   }
 
   public getMerchants(){
+    if(this.merchants != null)
+    {
+      return;
+    }
+
     this.http.get<List<MerchantData>>(this.baseUrl + 'api/merchant')
       .subscribe(
         result => {
@@ -296,7 +365,7 @@ export class PaymentComponent {
             messages.push(result.error.errors[property])
           }
 
-          alert(result.statusText + ": " + messages);
+          console.log(result.statusText + ": " + messages);
         });
   }
 }
