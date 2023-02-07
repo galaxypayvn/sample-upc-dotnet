@@ -3,7 +3,7 @@ namespace UPC.Api.Model
 {
 	public class OrderData
 	{
-		public string ApiOperation { get; set; } = "PAY";
+		public string ApiOperation { get; set; }
 		public string OrderID { get; set; }
 		public string OrderNumber { get; set; }
 		public decimal OrderAmount { get; set; }
@@ -26,6 +26,11 @@ namespace UPC.Api.Model
 		public string? CardHolderName { get; set; } = default!;
 		public string? CardExpireDate { get; set; } = default!;
 		public string? CardVerificationValue { get; set; } = default!;
+		#endregion
+		
+		#region Pay with token
+		public string? Token { get; set; }
+		public string? SourceOfFund { get; set; }
 		#endregion
     }
 }

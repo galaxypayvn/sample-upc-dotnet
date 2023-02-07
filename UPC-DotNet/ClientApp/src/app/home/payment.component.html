@@ -1,5 +1,5 @@
 ﻿<div>
-  <h1 style="color: #fab82d">Checkout Demo <span style="all: initial;"> v3.5.20221205.1500</span></h1>
+  <h1 style="color: #fab82d">Checkout Demo <span style="all: initial;"> v3.6.20230207</span></h1>
 </div>
 
 <div class="container padding-top-10">
@@ -24,6 +24,15 @@
             <select id="integrationMethods" class="form-control" name="integrationMethods" [(ngModel)]="integrationMethod"
                     (change)="filterMethod($event.target)">
               <option *ngFor="let item of UPC.integrationMethods | keyvalue:sortOptions" [value]="item.value.value"
+                      [selected]="item.value.isDefault">
+                {{item.value.text}}
+              </option>
+            </select>
+          </div>
+          <div class="col-50 padding-left-15">
+            <label>API Operations</label>
+            <select id="apiOperationMethod" class="form-control" name="apiOperationMethod" [(ngModel)]="apiOperationMethod">
+              <option *ngFor="let item of UPC.apiOperationMethod | keyvalue:sortOptions" [value]="item.value.value"
                       [selected]="item.value.isDefault">
                 {{item.value.text}}
               </option>
@@ -74,6 +83,16 @@
               </select>
             </div>
           </div>
+
+          <div class="row">
+            <div class="col-sm-12">
+              <div>
+                <label>Extra Data (JSON)</label>
+                <textarea name="extraData" id='extraData' placeholder="Extra data" rows="10" [(ngModel)]="extra"
+                          class="form-control"></textarea>
+              </div>
+            </div>
+          </div>
         </form>
         <br/>
       </div>
@@ -102,7 +121,7 @@
         <h3 style="color: #5d63a8">Payment Information</h3>
         <div class="row" [hidden]="isPayWithOption">
           <div class="col-100 padding-left-15">
-            <label>Service Provider <span style="color:red;">*</span></label>
+            <label>Payment Methods <span style="color:red;">*</span></label>
             <select class="form-control" name="paymentMethods" id="paymentMethods" [(ngModel)]="paymentMethod"
                     (change)="filterProvider($event.target)">
               <option *ngFor="let item of UPC.paymentMethods | keyvalue:sortOptions" [value]="item.value.value"
@@ -114,7 +133,7 @@
         </div>
         <div class="row" [hidden]="isPayWithOption">
           <div class="col-100 padding-left-15">
-            <label>Bank/Card Scheme/Wallet <span style="color:red;">*</span></label>
+            <label>Service Provider <span style="color:red;">*</span></label>
             <select id='paymentSources' class="form-control" name='paymentSources' [(ngModel)]="paymentSource"
                     (change)="filterPaymentSource()">>
               <option *ngFor="let item of paymentSourceOptions | keyvalue:sortOptions" [value]="item.value.value">
@@ -126,27 +145,49 @@
 
         <div [hidden]="isDisableHosted">
           <div class="row">
-            <div class="col-50 padding-left-15">
-              <label>Card Number <span style="color:red;">*</span></label>
-              <input class="form-control" type="text" id="cardNumber" name="cardNumber" [(ngModel)]="cardNumber"/>
-            </div>
-            <div class="col-50 padding-left-15">
-              <label>Card Holder Name <span style="color:red;">*</span></label>
-              <input class="form-control" type="text" id="cardHolderName" name="cardHolderName"
-                     [(ngModel)]="cardHolderName"/>
+            <div class="col-100 padding-left-15">
+              <label>Source Of fund <span style="color:red;">*</span></label>
+              <select id="sourceOfFund" class="form-control" name="sourceOfFund" [(ngModel)]="sourceOfFund"
+                      (change)="filterSourceOfFund($event.target)">
+                <option *ngFor="let item of UPC.sourceOfFund | keyvalue:sortOptions" [value]="item.value.value"
+                        [selected]="item.value.isDefault">
+                  {{item.value.text}}
+                </option>
+              </select>
             </div>
           </div>
 
-          <div class="row">
-            <div class="col-50 padding-left-15">
-              <label>{{labelCardDate}} <span style="color:red;">*</span></label>
-              <input class="form-control" type="text" id="cardExpireDate" name="cardExpireDate"
-                     [(ngModel)]="cardExpireDate"/>
+          <div class="row" [hidden]="isDisableToken">
+            <div class="col-100 padding-left-15">
+              <label>Token <span style="color:red;">*</span></label>
+              <input class="form-control" type="text" id="token" name="token" [(ngModel)]="token"/>
             </div>
-            <div class="col-50 padding-left-15" [hidden]="isCVV">
-              <label>CVV <span style="color:red;">*</span></label>
-              <input class="form-control" type="text" id="cardVerificationValue" name="cardVerificationValue"
-                     [(ngModel)]="cardVerificationValue"/>
+          </div>
+
+          <div [hidden]="isCardInfo">
+            <div class="row">
+              <div class="col-50 padding-left-15">
+                <label>Card Number <span style="color:red;">*</span></label>
+                <input class="form-control" type="text" id="cardNumber" name="cardNumber" [(ngModel)]="cardNumber"/>
+              </div>
+              <div class="col-50 padding-left-15">
+                <label>Card Holder Name <span style="color:red;">*</span></label>
+                <input class="form-control" type="text" id="cardHolderName" name="cardHolderName"
+                       [(ngModel)]="cardHolderName"/>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-50 padding-left-15">
+                <label>{{labelCardDate}} <span style="color:red;">*</span></label>
+                <input class="form-control" type="text" id="cardExpireDate" name="cardExpireDate"
+                       [(ngModel)]="cardExpireDate"/>
+              </div>
+              <div class="col-50 padding-left-15" [hidden]="isCVV">
+                <label>CVV <span style="color:red;">*</span></label>
+                <input class="form-control" type="text" id="cardVerificationValue" name="cardVerificationValue"
+                       [(ngModel)]="cardVerificationValue"/>
+              </div>
             </div>
           </div>
         </div>
@@ -159,15 +200,6 @@
             </button>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-12">
-      <div style="margin-top: -20px">
-        <label>Extra Data (JSON)</label>
-        <textarea name="extraData" id='extraData' placeholder="Extra data" rows="10" [(ngModel)]="extra"
-                  class="form-control"></textarea>
       </div>
     </div>
   </div>
