@@ -27,6 +27,13 @@
       "apiKey": "ICB7IjEiOiIxIiwiY3JlYXRlZCI6MjAyMjA4MTcxNjE0NTZ9.c4088df3ca18648ea0078dda0b879b32ba646730c2bf41b0255cc26d006f3e17",
       "salt": "YIDSN9ATEH",
       "order": 4
+    },
+    {
+      "value": "9364",
+      "text": "9364 - VIETJET THAI",
+      "apiKey": "ICB7IjkzNjQiOiI5MzY0IiwiY3JlYXRlZCI6MjAyMjEyMTQxNTA2MjB9.2b547f5bf238b7b3510c8a7c833f7491866d19393bd73be7a1347ade4f00179d",
+      "salt": "RG4CZWW4RQ",
+      "order": 4
     }
   ]
 }
