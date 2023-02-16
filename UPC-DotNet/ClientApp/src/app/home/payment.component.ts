@@ -98,6 +98,7 @@ export class PaymentComponent {
       provider === Providers.Wallet.value ||
       provider === Providers.Hub.value ||
       provider === Providers.QRPay.value ||
+      provider === Providers.BNPL.value ||
       method !== Methods.Hosted.value
     );
 
@@ -131,6 +132,12 @@ export class PaymentComponent {
         break;
 
       case Providers.QRPay.value:
+        this.paymentSourceOptions = this.UPC.paymentProviders[provider];
+        this.paymentSource = this.paymentSourceOptions[0].value;
+        this.currencyOption =  this.UPC.currencyDomestic;
+        break;
+
+      default:
         this.paymentSourceOptions = this.UPC.paymentProviders[provider];
         this.paymentSource = this.paymentSourceOptions[0].value;
         this.currencyOption =  this.UPC.currencyDomestic;

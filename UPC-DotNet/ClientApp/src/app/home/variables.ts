@@ -28,36 +28,43 @@ export class UPC {
   }
 
   public paymentMethods = {
-    Domestic:       { value: "domestic", text: "ATM CARD (VIETNAM)", isDefault: true, order: 1 },
-    International:  { value: "international", text: "INTERNATIONAL CARD (VISA, MASTER CARD, JCB, AMEX)", isDefault: false, order: 2 },
-    Wallet:         { value: "wallet", text: "eWALLET", isDefault: false, order: 3 },
-    Hub:            { value: "hub", text: "PAYMENT HUBS", isDefault: false, order: 4 },
-    QRPay:          { value: "qrpay", text: "QR PAYMENT", isDefault: false, order: 5 },
+    Domestic:       { value: "DOMESTIC", text: "ATM CARD (VIETNAM)", isDefault: true, order: 1 },
+    International:  { value: "INTERNATIONAL", text: "INTERNATIONAL CARD (VISA, MASTER CARD, JCB, AMEX)", isDefault: false, order: 2 },
+    Wallet:         { value: "WALLET", text: "eWALLET", isDefault: false, order: 3 },
+    Hub:            { value: "HUB", text: "PAYMENT HUBS", isDefault: false, order: 4 },
+    QRPay:          { value: "QRPAY", text: "QR PAYMENT", isDefault: false, order: 5 },
+    BNPL:           { value: "BNPL", text: "BUY NOW - PAY LATER", isDefault: false, order: 6 },
   }
 
   public paymentProviders = {
-    domestic: [
+    DOMESTIC: [
       { value: "", text: "VIETNAM LOCAL BANKS", isDefault: true, order: 1 },
       { value: "SAIGONBANK", text: "SAIGON BANK/NGÂN HÀNG TMCP SÀI GÒN CÔNG THƯƠNG", isDefault: false, order: 2 },
     ],
-    international: [
+    INTERNATIONAL: [
       { value: "", text: "NONE SPECIFIED", isDefault: true, order: 1 },
       { value: "VISA", text: "VISA CARD", isDefault: false, order: 2 },
       { value: "MASTER", text: "MASTER CARD", isDefault: false, order: 3 },
       { value: "JCB", text: "JCB CARD", isDefault: false, order: 4 },
       { value: "AMEX", text: "AMERICAN EXPRESS CARD", isDefault: false, order: 5 }
     ],
-    wallet: [
+    WALLET: [
       { value: "GPAY", text: "GPAY eWALLET", isDefault: true, order: 1 },
       { value: "MOMO", text: "MOMO eWALLET", isDefault: false, order: 2 },
-      { value: "ZALOPAY", text: "ZALOPAY eWALLET", isDefault: false, order: 2 },
+      { value: "ZALOPAY", text: "ZALOPAY eWALLET", isDefault: false, order: 3 },
+      { value: "VIETEL", text: "VIETEL MONEY eWALLET", isDefault: false, order: 4 },
     ],
-    hub: [
+    HUB: [
       { value: "2C2P", text: "2C2P HUB", isDefault: true, order: 1 },
-      { value: "POLI", text: "POLi HUB", isDefault: false, order: 2 },
+      { value: "POLI", text: "POLI HUB", isDefault: false, order: 2 },
+      { value: "PAYTM", text: "PAYTM HUB", isDefault: false, order: 3 },
     ],
-    qrpay: [
-      { value: "QRPAY", text: "QR PAYMENT", isDefault: true, order: 1 }
+    QRPAY: [
+      { value: "QRPAY", text: "VIET QR", isDefault: true, order: 1 },
+      { value: "VNPAY", text: "VNPAY QR", isDefault: false, order: 2 },
+    ],
+    BNPL: [
+      { value: "KREDIVO", text: "KREDIVO", isDefault: true, order: 1 }
     ]
   }
 
