@@ -20,6 +20,7 @@ namespace UPC.Api.Controllers
 {
     [ApiController]
     [Route("api")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ClientController : ControllerBase
     {
         private const string ChecksumText = "{\"signature\":\"failure\"}";
@@ -84,13 +85,6 @@ namespace UPC.Api.Controllers
         {
             _logger = logger;
             _configuration = configuration;
-        }
-        
-        [HttpGet]
-        [Route("merchant")]
-        public List<MasterMerchantData.MerchantData> GetMerchant()
-        {
-            return Merchants.Values.ToList();
         }
 
         [HttpPost]
@@ -278,7 +272,7 @@ namespace UPC.Api.Controllers
                 };
             }
         }
-
+        
         [HttpGet]
         [Route("cancel/{merchant}")]
         public RedirectResult OnCancelCallback([FromQuery] CallbackData model, string merchant)
