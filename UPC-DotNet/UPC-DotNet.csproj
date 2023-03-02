@@ -55,7 +55,6 @@
       <_ContentIncludedByDefault Remove="Pages\Error.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\_ViewImports.cshtml" />
       <_ContentIncludedByDefault Remove="ClientApp\src\config\config.json" />
-      <_ContentIncludedByDefault Remove="wwwroot\favicon.ico" />
     </ItemGroup>
 
     <ItemGroup>
