@@ -488,7 +488,7 @@ namespace UPC.Api.Controllers
                 HttpRequest request = HttpContext.Request;
                 string host = request.Host.ToString();
                 
-                return $"http://{host}";
+                return $"https://{host}";
             }
         }
 
