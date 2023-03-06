@@ -10,6 +10,7 @@ import { PaymentComponent } from './home/payment.component';
 import { RouterComponent } from './router/router.component';
 import { ResultComponent } from './result/result.component';
 import { CommonModule, CurrencyPipe } from '@angular/common';
+import {DocumentComponent} from "./swagger/swagger.component";
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
     CancelComponent,
     PaymentComponent,
     RouterComponent,
+    DocumentComponent,
     ResultComponent
   ],
   imports: [
@@ -29,6 +31,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
       { path: 'cancel', component: CancelComponent },
       { path: 'success', component: ResultComponent },
       { path: 'router', component: RouterComponent },
+      { path: 'documents', component: DocumentComponent }
     ])
   ],
   providers: [CurrencyPipe],

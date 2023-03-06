@@ -18,6 +18,7 @@
 
     <PropertyGroup Condition=" '$(RunConfiguration)' == 'UPC' " />
     <ItemGroup>
+        <PackageReference Include="IGeekFan.AspNetCore.RapiDoc" Version="0.0.5" />
         <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.4" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

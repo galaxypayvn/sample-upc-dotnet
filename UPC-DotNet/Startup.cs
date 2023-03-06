@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text.Json;
-
+using IGeekFan.AspNetCore.RapiDoc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
@@ -42,6 +42,13 @@ public class Startup
         {
             configuration.RootPath = "ClientApp/dist";
         });
+        
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1",new OpenApiInfo{Title = "API V1",Version = "v1"});
+            //var filePath = Path.Combine(System.AppContext.BaseDirectory,$"{typeof(Startup).Assembly.GetName().Name}.xml");
+            //c.IncludeXmlComments(filePath, true);
+        });
 
         SelfLog.Enable(Log.Error);
         LoggerConfiguration loggerConfiguration = new LoggerConfiguration()
@@ -73,6 +80,18 @@ public class Startup
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+
+            app.UseRapiDocUI(c =>
+            {
+                c.RoutePrefix = "2345234"; // serve the UI at root
+                c.SwaggerEndpoint("/v1/api-docs", "V1 Docs");
+                c.GenericRapiConfig = new GenericRapiConfig()
+                {
+                    RenderStyle="focused",
+                    Theme="light",//light,dark,focused   
+                };
+            });
         }
         else
         {
@@ -90,6 +109,7 @@ public class Startup
         app.UseRouting();
         app.UseEndpoints(endpoints =>
         {
+            endpoints.MapSwagger("{documentName}/api-docs");
             endpoints.MapControllerRoute(
                 name: "default",
                 pattern: "{controller}/{action=Index}/{id?}");
