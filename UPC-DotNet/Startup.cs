@@ -42,12 +42,7 @@ public class Startup
         {
             configuration.RootPath = "ClientApp/dist";
         });
-        
-        services.AddSwaggerGen(options =>
-        {
-            options.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApiDevoTo", Version = "v1" });
-        });
-        
+
         SelfLog.Enable(Log.Error);
         LoggerConfiguration loggerConfiguration = new LoggerConfiguration()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -78,16 +73,6 @@ public class Startup
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            app.UseSwagger();
-            app.UseSwaggerUI(options => 
-                options.SwaggerEndpoint("/swagger/v1/swagger.json",
-                    "Swagger Demo Documentation v1"));
-
-            app.UseReDoc(options =>
-            {
-                options.DocumentTitle = "Swagger Demo Documentation";
-                options.SpecUrl = "/swagger/v1/swagger.json";
-            });
         }
         else
         {

@@ -86,6 +86,13 @@ namespace UPC.Api.Controllers
             _logger = logger;
             _configuration = configuration;
         }
+        
+        [HttpGet]
+        [Route("merchant")]
+        public List<MasterMerchantData.MerchantData> GetMerchant()
+        {
+            return Merchants.Values.ToList();
+        }
 
         [HttpPost]
         [Route("transaction")]
@@ -480,9 +487,8 @@ namespace UPC.Api.Controllers
             {
                 HttpRequest request = HttpContext.Request;
                 string host = request.Host.ToString();
-                string protocol = request.IsHttps ? "https" : "http";
-
-                return $"{protocol}://{host}";
+                
+                return $"http://{host}";
             }
         }
 
