@@ -84,7 +84,7 @@ public class Startup
 
             app.UseRapiDocUI(c =>
             {
-                c.RoutePrefix = "2345234"; // serve the UI at root
+                c.RoutePrefix = "swagger"; // serve the UI at root
                 c.SwaggerEndpoint("/v1/api-docs", "V1 Docs");
                 c.GenericRapiConfig = new GenericRapiConfig()
                 {
