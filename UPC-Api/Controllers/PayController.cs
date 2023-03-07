@@ -29,7 +29,7 @@ public class PayController : ControllerBase
         Converters = { new NumberToStringConverter() }
     };
     
-    private class NumberToStringConverter : JsonConverter<string>
+    public class NumberToStringConverter : JsonConverter<string>
     {
         public override bool CanConvert(Type typeToConvert)
         {
@@ -65,32 +65,6 @@ public class PayController : ControllerBase
         _configuration = configuration;
     }
 
-    private static string Hash(
-        string plainText, 
-        string? salt = "", 
-        HashAlgorithm? algorithm = null,
-        Encoding? encoding = null)
-    {
-        algorithm ??= SHA256.Create();
-        encoding ??= Encoding.UTF8;
-
-        byte[] bytes = encoding.GetBytes(plainText + salt);
-        bytes = algorithm.ComputeHash(bytes);
-        return bytes.Aggregate(string.Empty, (current, x) => current + $"{x:x2}");
-    }
-    
-    [HttpPost]
-    [Route("/createSignature")]
-    public string CreateSignature(
-        [FromHeader(Name="salt")] string sha256Salt,
-        ServiceRequestData<object> request)
-    {
-        string content = JsonSerializer.Serialize(request, JsonOptions);
-        string signature = Hash(content, sha256Salt); // Hash 256
-        
-        return signature!;
-    }
-    
     [HttpPost]
     [Route("/transaction/pay")]
     public ServiceResponseData<ResponseData> CreateOrderPay(
@@ -155,22 +129,6 @@ public class PayController : ControllerBase
         
         ServiceResponseData<QueryResponse>? resultData =
             JsonSerializer.Deserialize<ServiceResponseData<QueryResponse>>(response, JsonOptions);
-
-        return resultData!;
-    }
-    [HttpPost]
-    [Route("/token/remove")]
-    public ServiceResponseData<object> RemoveToken(
-        [FromHeader(Name="signature")] string signature,
-        [FromHeader(Name="apiKey")] string apiKey,
-        ServiceRequestData<RemoveTokenRequest> request)
-    {
-        string url = _configuration.GetValue<string>("UPC:EndPoint") + "/api/v1/token/remove";
-        string content = JsonSerializer.Serialize(request, JsonOptions);
-        string response = ServiceBase.Post(url, content, apiKey, signature);
-        
-        ServiceResponseData<object>? resultData =
-            JsonSerializer.Deserialize<ServiceResponseData<object>>(response, JsonOptions);
 
         return resultData!;
     }

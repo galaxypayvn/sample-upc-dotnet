@@ -230,3 +230,11 @@ public class DateTimeStringSwagger : ISwagger<string>
         return DateTime.Now.ToString("yyyyMMddHHmmss");
     }
 }
+
+public class NewObjectSwagger: ISwagger<object>
+{
+    public object Generate(params object?[] parameters)
+    {
+        return new object();
+    }
+}
