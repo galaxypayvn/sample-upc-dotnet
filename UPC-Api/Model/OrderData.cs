@@ -1,25 +1,29 @@
-﻿#pragma warning disable CS8618
+﻿using System.ComponentModel;
+
+#pragma warning disable CS8618
 namespace UPC.Api.Model
 {
 	public class OrderData
 	{
-		public string ApiOperation { get; set; }
-		public string OrderID { get; set; }
+        public string? ApiOperation { get; set; }
+        public string OrderID { get; set; }
 		public string OrderNumber { get; set; }
 		public decimal OrderAmount { get; set; }
 		public string OrderCurrency { get; set; }
-		public string OrderDateTime { get; set; }
+        public string OrderDateTime { get; set; }
 		public string OrderDescription { get; set; }
 
-		public string PaymentMethod { get; set; }
-		public string SourceType { get; set; }
+		public string PaymentMethod { get; set; }  
+		public string SourceType { get; set; } 
 		public object ExtraData { get; set; }
-		public object Language { get; set; }
+		public string Language { get; set; }
 		
+        #region url callback
 		public string? SuccessURL { get; set; }
 		public string? FailureURL { get; set; }
 		public string? CancelURL { get; set; }
 		public string? IpnURL { get; set; }
+        #endregion
 		
 		#region Hosted Merchant Only
 		public string? CardNumber { get; set; } = default!;

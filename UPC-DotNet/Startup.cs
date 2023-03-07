@@ -45,6 +45,7 @@ public class Startup
         
         services.AddSwaggerGen(c =>
         {
+            c.SchemaFilter<SwaggerFilter>();
             c.SwaggerDoc("v1",new OpenApiInfo{Title = "API V1",Version = "v1"});
             //var filePath = Path.Combine(System.AppContext.BaseDirectory,$"{typeof(Startup).Assembly.GetName().Name}.xml");
             //c.IncludeXmlComments(filePath, true);
@@ -81,7 +82,6 @@ public class Startup
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
-
             app.UseRapiDocUI(c =>
             {
                 c.RoutePrefix = "swagger"; // serve the UI at root
