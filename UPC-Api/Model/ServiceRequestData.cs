@@ -11,6 +11,5 @@ public class ServiceRequestData<TModel> where TModel : class
     [DefaultValue("yyyyMMddHHmmss")]
     [SwaggerValue(typeof(DateTimeStringSwagger))]
     public string RequestDateTime { get; set; } = default!;
-
     public TModel RequestData { get; set; } = default!;
 }
