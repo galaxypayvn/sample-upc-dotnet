@@ -34,8 +34,9 @@ public class TokenController : ControllerBase
     [HttpPost]
     [Route("/token/remove")]
     public ServiceResponseData<object> RemoveToken(
-        [FromHeader(Name="signature")] string signature,
+        [FromHeader(Name="salt")] string salt,
         [FromHeader(Name="apiKey")] string apiKey,
+        [FromHeader(Name="signature")] string signature,
         ServiceRequestData<RemoveTokenRequest> request)
     {
         string url = _configuration.GetValue<string>("UPC:EndPoint") + "/api/v1/token/remove";

@@ -58,6 +58,7 @@
 
 <div id="bodyDocument" hidden>
   <rapi-doc
+    id="the-doc"
     spec-url="https://uat-merchant.galaxypay.vn/v1/api-docs"
     theme = "dark"
   > </rapi-doc>
@@ -69,5 +70,31 @@
     document.getElementById("bodyDemo").hidden = true;
     document.getElementById("bodyDocument").hidden = false;
   }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/sha256.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const rapidocEl = document.getElementById('the-doc');
+    rapidocEl.addEventListener('before-try', (e) => {
+      if (e.detail.request.method === 'POST') {
+        let request = document.querySelector("rapi-doc").shadowRoot
+          .querySelector('api-request').shadowRoot
+          .querySelector('textarea').value
+
+        let salt = document.querySelector("rapi-doc").shadowRoot
+          .querySelector('api-request').shadowRoot
+          .querySelector('.request-param[data-pname=salt]').value
+
+        let signData = request + salt;
+        let signature = CryptoJS.SHA256(signData).toString();
+
+        document.querySelector("rapi-doc").shadowRoot
+          .querySelector('api-request').shadowRoot
+          .querySelector('.request-param[data-pname=signature]').value = signature
+        e.detail.request.headers.append('signature', signature);
+      }
+    });
+  });
 </script>
 </html>

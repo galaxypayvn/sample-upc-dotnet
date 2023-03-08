@@ -68,8 +68,9 @@ public class PayController : ControllerBase
     [HttpPost]
     [Route("/transaction/pay")]
     public ServiceResponseData<ResponseData> CreateOrderPay(
-        [FromHeader(Name="signature")] string signature,
+        [FromHeader(Name="salt")] string salt,
         [FromHeader(Name="apiKey")] string apiKey,
+        [FromHeader(Name="signature")] string signature,
         ServiceRequestData<PayOrderRequest> request)
     {
         string url = _configuration.GetValue<string>("UPC:EndPoint") + "/api/v1/transaction/pay";
@@ -85,8 +86,9 @@ public class PayController : ControllerBase
     [HttpPost]
     [Route("/transaction/payWithOption")]
     public ServiceResponseData<ResponseData> CreateOrderPayWithOption(
-        [FromHeader(Name="signature")] string signature,
+        [FromHeader(Name="salt")] string salt,
         [FromHeader(Name="apiKey")] string apiKey,
+        [FromHeader(Name="signature")] string signature,
         ServiceRequestData<PayWithOptionOrderRequest> request)
     {
         string url = _configuration.GetValue<string>("UPC:EndPoint") + "/api/v1/transaction/payWithOption";
@@ -119,8 +121,9 @@ public class PayController : ControllerBase
     [HttpPost]
     [Route("/transaction/query")]
     public ServiceResponseData<QueryResponse> Query(
-        [FromHeader(Name="signature")] string signature,
+        [FromHeader(Name="salt")] string salt,
         [FromHeader(Name="apiKey")] string apiKey,
+        [FromHeader(Name="signature")] string signature,
         ServiceRequestData<QueryTransactionRequest> request)
     {
         string url = _configuration.GetValue<string>("UPC:EndPoint") + "/api/v1/transaction/query";

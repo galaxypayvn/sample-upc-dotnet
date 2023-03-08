@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Debugging;
@@ -46,7 +48,11 @@ public class Startup
         services.AddSwaggerGen(c =>
         {
             c.SchemaFilter<SwaggerFilter>();
-            c.SwaggerDoc("v1",new OpenApiInfo{Title = "API V1",Version = "v1"});
+            c.SwaggerDoc("v1",new OpenApiInfo
+            {
+                Title = "API V1",
+                Version = "v1"
+            });
             //var filePath = Path.Combine(System.AppContext.BaseDirectory,$"{typeof(Startup).Assembly.GetName().Name}.xml");
             //c.IncludeXmlComments(filePath, true);
         });

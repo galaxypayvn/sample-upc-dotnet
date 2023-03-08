@@ -4,7 +4,6 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using UPC.Api.Model;
 
 namespace UPC.Api.Controllers;
@@ -12,8 +11,6 @@ namespace UPC.Api.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly IConfiguration _configuration;
-
     private JsonSerializerOptions JsonOptions { get; } = new()
     {
         WriteIndented = true,
@@ -26,12 +23,7 @@ public class AuthController : ControllerBase
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         Converters = { new PayController.NumberToStringConverter() }
     };
-    
-    public AuthController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-    
+
     private static string Hash(
         string plainText, 
         string? salt = "", 
