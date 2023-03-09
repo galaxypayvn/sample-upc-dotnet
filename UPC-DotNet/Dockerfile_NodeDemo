@@ -5,7 +5,7 @@ FROM node:16-bullseye
 # where available (npm@5+)
 WORKDIR /src/Gateways/Gateway.NodeDemo
 # COPY  ./Node.Demo/sample-upc-nodejs ./
-COPY ["./Node.Demo/sample-upc-nodejs", "./"]
+COPY ["./Node.Demo", "./"]
 
 RUN npm install
 # If you are building your code for production
